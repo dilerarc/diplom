@@ -1,0 +1,29 @@
+@(e: Host, hostGroups: List[HostGroup], form: Form[Host])
+    @import template._
+
+    @main(title = "Host") {
+
+        <div class="container">
+            <div class="row">
+                <h1 id="forms" class="page-header">Host</h1>
+
+                @helper.form(routes.HostController.save(e._id.toString), 'role -> "form") {
+
+                    @text(form("name"), "Name", "Enter name")
+
+                    @select(form("hostGroupId"), "Host group", hostGroups.map(h => (h.name, h._id.toString)))
+
+                    @text(form("ip"), "IP", "Enter IP")
+
+                    @text(form("description"), "Description", "Enter description")
+
+                    @checkbox(form("active"), "Active")
+
+                    <button type="submit" class="btn btn-default">Submit</button>
+
+                }
+
+            </div>
+        </div>
+
+    }

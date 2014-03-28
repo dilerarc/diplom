@@ -1,0 +1,36 @@
+@(col: List[Host])
+
+
+    @main(title = "All hosts") {
+
+
+        <div class="container">
+            <div class="row">
+                <h1 id="forms" class="page-header">All hosts</h1>
+                <p><a href="@routes.HostController.showNew" class="btn btn-default">New host</a></p>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Group</th>
+                            <th>IP</th>
+                            <th>State</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for(e <- col) {
+                        <tr>
+                            <td><a href="@routes.HostController.edit(e._id.toString)">@e.name</a></td>
+                            <td>@HostGroup.get(e.hostGroupId).get.name</td>
+                            <td>@e.ip</td>
+                            <td>@e.active</td>
+                            <td>@e.description</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    }

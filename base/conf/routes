@@ -1,0 +1,38 @@
+# Home page
+GET         /                             controllers.ApplicationController.home
+GET         /home                         controllers.ApplicationController.home
+GET         /sign                         controllers.ApplicationController.sign
+
+# Hosts routes
+GET         /hosts                        controllers.HostController.all
+GET         /hosts/:id/                   controllers.HostController.edit(id:String)
+GET         /hosts/create                 controllers.HostController.showNew
+
+POST        /hosts/create                 controllers.HostController.saveNew
+POST        /hosts/:id/                   controllers.HostController.save(id:String)
+
+# Items routes
+GET         /items                        controllers.ItemController.all
+GET         /items/:id/                   controllers.ItemController.edit(id:String)
+GET         /items/create                 controllers.ItemController.showNew
+
+POST        /items/create                 controllers.ItemController.saveNew
+POST        /items/:id/                   controllers.ItemController.save(id:String)
+
+# Shell commands routes
+GET         /shell_commands               controllers.ShellCommandController.all
+GET         /shell_commands/:id/          controllers.ShellCommandController.edit(id:String)
+GET         /shell_commands/create        controllers.ShellCommandController.showNew
+
+POST        /shell_commands/create        controllers.ShellCommandController.saveNew
+POST        /shell_commands/:id/          controllers.ShellCommandController.save(id:String)
+
+# Host groups routes
+GET         /host_group                   controllers.HostGroupController.all
+GET         /host_group/:id/              controllers.HostGroupController.edit(id:String)
+GET         /host_group/create            controllers.HostGroupController.showNew
+
+POST        /host_group/create            controllers.HostGroupController.saveNew
+POST        /host_group/:id/              controllers.HostGroupController.save(id:String)
+
+GET         /assets/*file                 controllers.Assets.at(path="/public", file)

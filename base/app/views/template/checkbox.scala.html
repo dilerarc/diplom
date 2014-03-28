@@ -1,0 +1,7 @@
+@(field: Field, label: String = "CHANGEME")
+
+    <div class="checkbox">
+        <label class="control-label">
+            <input name="@field.name" type="checkbox" @if(field.value exists (_.nonEmpty)) {checked}> @label
+        </label>
+    </div>
