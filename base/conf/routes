@@ -19,6 +19,9 @@ GET         /items/create                 controllers.ItemController.showNew
 POST        /items/create                 controllers.ItemController.saveNew
 POST        /items/:id/                   controllers.ItemController.save(id:String)
 
+# Charts routes
+GET         /charts/itemId                controllers.ChartController.show(itemId:String)
+
 # Shell commands routes
 GET         /shell_commands               controllers.ShellCommandController.all
 GET         /shell_commands/:id/          controllers.ShellCommandController.edit(id:String)

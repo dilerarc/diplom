@@ -1,0 +1,18 @@
+@(item: Item, data: List[MonitoringData])
+
+@main(title = "New item") {
+
+    <div class="container">
+        <div class="row">
+
+            <div id="placeholder">@data</div>
+
+        </div>
+    </div>
+
+    <script>
+
+        chart();
+
+    </script>
+}

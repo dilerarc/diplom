@@ -18,7 +18,7 @@ class Agent extends Actor {
   override def receive: Actor.Receive = {
     case "start" => {
       println("start")
-      val base = sender()
+      val base = sender
       import system.dispatcher
       system.scheduler.schedule(150 milliseconds, 150 milliseconds) {
         base ! System.currentTimeMillis
