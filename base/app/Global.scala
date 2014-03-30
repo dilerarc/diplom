@@ -1,6 +1,6 @@
 import akka.actor.{Props, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import models.sheduler.BaseActor
+import models.core.BaseActor
 import play.api._
 
 object Global extends GlobalSettings {
