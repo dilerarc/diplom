@@ -9,7 +9,6 @@ class Main extends Bootable {
   val agentSystem = ActorSystem("agentSystem", ConfigFactory.load("agent"))
 
   def startup() = {
-    agentSystem.actorOf(Props[Agent], "agent")
     println("Agent system started.")
   }
 

@@ -21,4 +21,8 @@ object MonitoringData {
 
   def find(itemId: String): List[MonitoringData] = MonitoringDataDAO.find(MongoDBObject("itemId" -> itemId)).toList
 
+  def create(e: MonitoringData) = {
+    MonitoringDataDAO.insert(e)
+  }
+
 }

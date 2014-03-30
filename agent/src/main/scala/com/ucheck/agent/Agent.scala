@@ -3,44 +3,41 @@ package com.ucheck.agent
 import scala.concurrent.duration._
 import akka.actor._
 import scala.sys.process._
-import akka.actor.Identify
-import com.ucheck.common.{JobResult, JobStop, Job}
+import com.ucheck.common.{JobStop, JobResult, Job}
 
-class Agent extends Actor {
+class Agent(base: ActorRef, job: Job) extends Actor {
 
-  val system = context.system
-  var tasks = Map()[String, Cancellable]
-  var base: ActorRef = null
+  import context.dispatcher
+
+  var task:Cancellable = null
 
   override def preStart(): Unit = {
 
     println("preStart")
 
-    val selection = context.actorSelection("akka.tcp://baseSystem@127.0.0.1:2552/user/base")
-    selection ! Identify
+    task = context.system.scheduler.schedule(5 seconds, job.updateInterval seconds) {
+      println(this)
+      base ! JobResult(job.itemId, format(job.command).!!)
+    }
 
-    val cmd = "atop 0 1" #| "grep java"
+/*    val cmd = "atop 0 1" #| "grep java"
     val output = cmd.!!
-    println(output)
+    println(output)*/
   }
 
   override def receive: Actor.Receive = {
 
-    case ActorIdentity(message, actor) if !actor.isEmpty ⇒
-      base = actor.get
-      base ! self
-
-    case Job(itemId, command, updateInterval) ⇒
-      tasks += itemId -> context.system.scheduler.schedule(0 seconds, updateInterval seconds) {
-        base ! JobResult(itemId, format(command).!!)
-      }
-
-    case JobStop(itemId) ⇒
-      tasks(itemId).cancel()
-      tasks -= itemId
+    case JobStop => {
+      task.cancel()
+      self ! PoisonPill
+    }
   }
 
-  def format(command: String): ProcessBuilder = {
+  private def format(command: String): ProcessBuilder = {
     command
   }
+}
+
+object Agent {
+  def apply(base:ActorRef, job:Job): Props = Props(classOf[Agent], base, job)
 }

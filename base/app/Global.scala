@@ -1,20 +1,18 @@
-import akka.actor.{Props, ActorSystem}
-import com.typesafe.config.ConfigFactory
+import akka.actor.{Props}
 import models.core.BaseActor
 import play.api._
+import play.api.libs.concurrent.Akka
+import play.api.Play.current
 
 object Global extends GlobalSettings {
 
-  val baseSystem = ActorSystem("baseSystem", ConfigFactory.load("base"))
-  val baseActor = baseSystem.actorOf(Props[BaseActor], "base")
-
   override def onStart(app: Application) {
+    Akka.system.actorOf(Props[BaseActor], "baseActor")
     Logger.info("Application has started")
   }
 
   override def onStop(app: Application) {
     Logger.info("Application shutdown...")
-    baseSystem.shutdown()
   }
 
 }

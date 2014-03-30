@@ -1,64 +1,45 @@
 package models.core
 
 import akka.actor._
-import models.{ShellCommand, Host, ItemType, Item}
-import com.ucheck.common._
-import akka.actor.ActorIdentity
-import akka.actor.Identify
+import models._
 import scala.concurrent.duration._
+import com.ucheck.agent.Agent
+import com.ucheck.common.{JobStop, Job, JobResult}
+import play.api.Play.current
 
 class BaseActor extends Actor {
 
-  var agents = Map[String, ActorRef]()
+  import context.dispatcher
 
   override def preStart(): Unit = {
     println("preStart")
-    context.system.scheduler.schedule(0 seconds, 30 seconds){
-      refreshAll()
+    context.system.scheduler.schedule(0 seconds, 5 seconds) {
+      refresh()
     }
   }
 
-  def refreshAll() = {
-    refreshHosts()
-    refreshJobs()
-  }
-
   def receive = {
-
-    case ref: ActorRef if !(agents.values.toSet contains ref) ⇒
-      agents += (ref.path.address.host.get -> ref)
-      context watch ref
-
-    case ActorIdentity(message, actor) if !actor.isEmpty && !agents.values.toSet.contains(actor.get) ⇒
-      agents += (actor.get.path.address.host.get -> actor.get)
-      context watch actor.get
+    case result: JobResult => MonitoringData.create(MonitoringData(result.itemId, result.data))
   }
 
-  private def refreshJobs() = {
+  private def refresh() = {
 
-    val hosts = Item.all()
-      .filter(i ⇒ i.active && i.itemType == ItemType.Agent)
-      .groupBy(item ⇒ Host.get(item.hostId))
-      .filter(host ⇒ host._1.get.active)
+    context.actorSelection("akka.tcp://agentSystem*") ! JobStop
 
-    hosts.foreach(
-      pair ⇒ {
-        val actor = agents(pair._1.get.ip)
-        val items = pair._2
-        items.foreach(
-          item ⇒ actor ! Job(item._id.toString, ShellCommand.get(item.commandId).get.command, item.updateInterval)
-        )
-      }
-    )
-  }
+    Item.all()
+      .filter(_.active)
+      .filter(_.itemType == ItemType.Agent)
+      .filter(item ⇒ Host.get(item.hostId).get.active)
+      .foreach(
+        item ⇒ {
 
-  private def refreshHosts() = {
-    Host.all()
-      .filter(_.active).foreach(
-        host => {
-          val ip = host.ip
-          val actor = context.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agent")
-          actor ! Identify
+          val itemId = item._id.toString
+          val host = Host.get(item.hostId).get.name
+          val command = ShellCommand.get(item.commandId).get.command
+          val updateInterval = item.updateInterval
+
+          val actor = context.system.actorOf(Agent(self, Job(itemId, command, updateInterval)), s"agent:$host:$itemId")
+          context watch actor
         }
       )
   }

@@ -1,5 +1,7 @@
 import sbt._
 import Keys._
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object BuildSettings {
 
@@ -35,6 +37,11 @@ object DiplomBuid extends Build {
     akkaKernel
   )
 
+  val agentAssemblyDeps = Seq (
+    akkaRemote % "provided",
+    akkaKernel % "provided"
+  )
+
   val baseDeps = commonDeps ++ Seq (
     salat
   )
@@ -58,10 +65,12 @@ object DiplomBuid extends Build {
   lazy val agent = Project (
     "agent",
     file ("agent"),
-    settings = buildSettings ++ Seq (
+    settings = buildSettings ++ assemblySettings ++ Seq (
       mainClass := Some("Main.scala"),
-      exportJars := true,
-      libraryDependencies ++= agentDeps
+      jarName in assembly := "agent.jar",
+      assemblyOption in assembly ~= { _.copy(includeScala = false) },
+      libraryDependencies ++= agentAssemblyDeps
+
     )
   ) dependsOn common
 
@@ -69,5 +78,5 @@ object DiplomBuid extends Build {
     "base",
     file ("base"),
     settings = buildSettings  ++ play.Project.playScalaSettings ++ Seq (libraryDependencies ++= baseDeps)
-  ) dependsOn common
+  ) dependsOn (common, agent)
 }
