@@ -1,43 +1,47 @@
 package com.ucheck.agent
 
-import scala.concurrent.duration._
 import akka.actor._
-import scala.sys.process._
-import com.ucheck.common.{JobStop, JobResult, Job}
+import com.ucheck.common.Jobs
+import com.ucheck.common.JobsStop
+import com.ucheck.common.Jobs
+import scala.concurrent.duration._
 
-class Agent(base: ActorRef, job: Job) extends Actor {
+class Agent extends Actor {
 
-  import context.dispatcher
-
-  var task:Cancellable = null
+  var workers: Set[ActorRef] = Set()
+  context.setReceiveTimeout(20 seconds)
 
   override def preStart(): Unit = {
-
     println("preStart")
-
-    task = context.system.scheduler.schedule(5 seconds, job.updateInterval seconds) {
-      println(this)
-      base ! JobResult(job.itemId, format(job.command).!!)
-    }
-
-/*    val cmd = "atop 0 1" #| "grep java"
-    val output = cmd.!!
-    println(output)*/
   }
 
   override def receive: Actor.Receive = {
 
-    case JobStop => {
-      task.cancel()
-      self ! PoisonPill
-    }
-  }
+    case jobs: Jobs =>
 
-  private def format(command: String): ProcessBuilder = {
-    command
-  }
-}
+      workers foreach (worker => {
+        worker ! JobsStop
+        workers = Set()
+      })
 
-object Agent {
-  def apply(base:ActorRef, job:Job): Props = Props(classOf[Agent], base, job)
+      jobs.jobs.foreach(job => {
+        val worker = context.actorOf(Worker(sender, job))
+        workers += worker
+      })
+
+    case JobsStop => context.children foreach (worker => {
+      println(worker)
+      worker ! JobsStop
+      workers = Set()
+    })
+
+    case ReceiveTimeout ⇒
+      context.setReceiveTimeout(Duration.Undefined)
+      println("timout")
+
+      workers foreach (worker => {
+        worker ! JobsStop
+        workers = Set()
+      })
+  }
 }

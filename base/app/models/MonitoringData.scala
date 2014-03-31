@@ -3,6 +3,7 @@ package models
 import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.MongoDBObject
 import com.novus.salat.dao.{ModelCompanion, SalatDAO}
+import com.novus.salat.grater
 import com.mongodb.casbah.MongoConnection
 import play.api.PlayException
 import play.api.Play.current
@@ -19,10 +20,14 @@ object MonitoringData {
 
   def all(): List[MonitoringData] = MonitoringDataDAO.find(MongoDBObject.empty).toList
 
-  def find(itemId: String): List[MonitoringData] = MonitoringDataDAO.find(MongoDBObject("itemId" -> itemId)).toList
+  def find(itemId: String): String = {
+    grater[MonitoringData].toPrettyJSONArray(MonitoringDataDAO.find(MongoDBObject("itemId" -> itemId)).toTraversable)
+  }
 
   def create(e: MonitoringData) = {
     MonitoringDataDAO.insert(e)
   }
+
+
 
 }

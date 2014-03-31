@@ -10,6 +10,7 @@ class Main extends Bootable {
 
   def startup() = {
     println("Agent system started.")
+    agentSystem.actorOf(Props[Agent], "agentActor")
   }
 
   def shutdown() = {

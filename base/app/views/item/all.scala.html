@@ -21,6 +21,7 @@
                             <th>Keep period</th>
                             <th>Description</th>
                             <th>Active</th>
+                            <th>Chart</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,6 +37,7 @@
                             <td>@e.keepPeriod</td>
                             <td>@e.description</td>
                             <td>@e.active</td>
+                            <td><a href="@routes.ChartController.show(e._id.toString)">chart</a></td>
                         </tr>
                     }
                     </tbody>
