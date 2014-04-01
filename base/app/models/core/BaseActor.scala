@@ -4,18 +4,14 @@ import akka.actor._
 import models._
 import scala.concurrent.duration._
 import com.ucheck.common.{Jobs, JobsStop, Job, JobResult}
-import java.util.UUID
 
 class BaseActor extends Actor {
 
   import context.dispatcher
 
-  var task:Cancellable = null
-  //var jobs: Map[String, Job] = Map()
+  var task: Cancellable = null
 
   override def preStart(): Unit = {
-    println("preStart")
-    println(context.system)
     task = context.system.scheduler.schedule(0 seconds, 15 seconds) {
       refresh()
     }
@@ -27,35 +23,33 @@ class BaseActor extends Actor {
       context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! jobsStop
 
     case result: JobResult =>
-      println(result)
-      MonitoringData.create(MonitoringData(result.itemId, result.data))
+      MonitoringData.create(MonitoringData(result.itemId, result.data, result.date))
 
-    case ActorIdentity(id, actor)  => println(id)
-      //actor.get ! jobs(id)
   }
 
   private def refresh() = {
 
+    val hosts = Host.all()
+      .filter(_.active)
+      .map(host => (host._id.toString, host))
+      .toMap
 
-    Item.all()
+    val commands = ShellCommand.all()
+      .map(command => (command._id.toString, command))
+      .toMap
+
+    val items = Item.all()
       .filter(_.active)
       .filter(_.itemType == ItemType.Agent)
-      .filter(item ⇒ Host.get(item.hostId).get.active)
-      .foreach(
-        item ⇒ {
+      .filter(item => hosts.contains(item.hostId))
+      .groupBy(_.hostId)
 
-          val itemId = item._id.toString
-          val ip = Host.get(item.hostId).get.ip
-          val command = ShellCommand.get(item.commandId).get.command
-          val updateInterval = item.updateInterval
-          //val id = UUID.randomUUID().toString
+    items.foreach(
+      pair => {
+        val ip = hosts(pair._1).ip
+        val jobs = pair._2.map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
+        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! Jobs(jobs)
+      })
 
-          //jobs += id -> Job(itemId, command, updateInterval)
-          context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! Jobs(Set(Job(itemId, command, updateInterval)))
-
-          // as ! Identify
-
-        }
-      )
   }
 }

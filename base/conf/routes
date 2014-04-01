@@ -20,7 +20,8 @@ POST        /items/create                 controllers.ItemController.saveNew
 POST        /items/:id/                   controllers.ItemController.save(id:String)
 
 # Charts routes
-GET         /charts/itemId                controllers.ChartController.show(itemId:String)
+GET         /charts/:itemId                controllers.ChartController.show(itemId:String)
+GET         /charts/:itemId/delta          controllers.ChartController.getAdditionalData(itemId:String, time:String)
 
 # Shell commands routes
 GET         /shell_commands               controllers.ShellCommandController.all

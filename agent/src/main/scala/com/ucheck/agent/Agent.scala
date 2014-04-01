@@ -1,7 +1,6 @@
 package com.ucheck.agent
 
 import akka.actor._
-import com.ucheck.common.Jobs
 import com.ucheck.common.JobsStop
 import com.ucheck.common.Jobs
 import scala.concurrent.duration._
@@ -19,29 +18,31 @@ class Agent extends Actor {
 
     case jobs: Jobs =>
 
+      println(jobs.jobs)
       workers foreach (worker => {
         worker ! JobsStop
-        workers = Set()
       })
+      workers = Set()
 
       jobs.jobs.foreach(job => {
         val worker = context.actorOf(Worker(sender, job))
         workers += worker
       })
 
-    case JobsStop => context.children foreach (worker => {
-      println(worker)
-      worker ! JobsStop
+    case JobsStop => {
+      workers foreach (worker => {
+        println(worker)
+        worker ! JobsStop
+      })
       workers = Set()
-    })
+    }
 
     case ReceiveTimeout ⇒
-      context.setReceiveTimeout(Duration.Undefined)
       println("timout")
 
       workers foreach (worker => {
         worker ! JobsStop
-        workers = Set()
       })
+      workers = Set()
   }
 }

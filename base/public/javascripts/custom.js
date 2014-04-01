@@ -1,60 +1,76 @@
-function chart() {
-    var data = [ ];
+function chart(itemId, label, units, data) {
 
-    data.push([ 1, 2 ]);
+    var mainData = data.map(function (obj) {
+        return [obj.date, obj.data];
+    });
+
+    var lastDate = mainData[mainData.length - 1][0]
 
     var plot = $.plot("#placeholder", [
         {
-            data: data, label: "Labbel"
+            data: mainData, label: label
         }
     ], {
-        legend: {
-            backgroundOpacity: 0.8,
-            position: "sw"
-        },
-        series: {
-            lines: {
-                show: true
-            },
-            points: {
-                show: true
-            }
-        },
-        grid: {
-            hoverable: true
-        },
         xaxis: {
+            timeformat: "%y-%m-%d %H:%M:%S",
             mode: "time",
-            minTickSize: [ 1, "day" ]
-        },
-        yaxes: [
-            { position: "left", min: 0 },
-            { position: "right", min: 0 },
-            { position: "right", min: 0 }
-        ]
+            minTickSize: [ 1, "second" ]/*,
+             min: (new Date(2014, 3, 1, 14, 20, 0, 0)).getTime(),
+             max: (new Date(2014, 3, 1, 14, 21, 0, 0)).getTime()*/
+        }
     });
 
-    $("<div id='tooltip'></div>").css({
-        position: "absolute",
-        display: "none",
-        border: "1px solid #fdd",
-        padding: "2px",
-        "background-color": "#fee",
-        opacity: 0.80
-    }).appendTo("body");
+    function update() {
 
-    $("#placeholder").bind("plothover", function (event, pos, item) {
+        var newData = JSON.parse(getData(itemId, lastDate));
 
-        if (item) {
-            var x = item.datapoint[ 0 ],
-                y = item.datapoint[ 1 ];
+        newData = newData.map(function (obj) {
+            return [obj.date, obj.data];
+        });
 
-            $("#tooltip").html(item.series.label + ". " + moment(new Date(x)).format("YYYY-MM-DD") + " : " + y)
-                .css({ top: item.pageY + 5, left: item.pageX + 5 })
-                .fadeIn(200);
-        } else {
-            $("#tooltip").hide();
+        if (newData.length > 0) {
+            mainData = mainData.concat(newData);
+            lastDate = newData[newData.length - 1][0];
         }
 
-    });
+        plot.setData([
+            {
+                data: mainData
+            }
+        ]);
+        plot.setupGrid();
+        plot.draw();
+
+        setTimeout(update, 2000);
+    }
+
+    update()
 }
+
+function getData(itemId, date) {
+
+    var result = [];
+
+    var request = $.ajax({
+        async: false,
+        url: "/charts/{0}/delta?time={1}".format(itemId, date)
+    });
+
+    request.done(function (data) {
+        result = data;
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+        console.log("Request failed: " + textStatus)
+    });
+
+    return result;
+}
+
+String.prototype.format = function () {
+    var args = arguments;
+
+    return this.replace(/\{(\w+)\}/g, function () {
+        return args[arguments[1]];
+    });
+};

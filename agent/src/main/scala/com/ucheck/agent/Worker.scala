@@ -4,7 +4,8 @@ import scala.concurrent.duration._
 import akka.actor._
 import com.ucheck.common.{JobsStop, JobResult, Job}
 import scala.sys.process._
-import java.util.UUID
+import java.util.Date
+import scala.util.Random
 
 class Worker(sender: ActorRef, job: Job) extends Actor {
 
@@ -13,11 +14,11 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
   var t2:Cancellable = null
 
   override def preStart(): Unit = {
-    println ("start")
+    println ("start:" + job)
 
     t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
-      //sender ! JobResult(job.itemId, format(job.command).!!)
-      sender ! JobResult(job.itemId, UUID.randomUUID().toString)
+      //sender ! JobResult(job.itemId, format(job.command).!!, new Date())
+      sender ! JobResult(job.itemId, Random.nextLong().toString, new Date())
     }
 
 
@@ -30,7 +31,7 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
   override def receive: Actor.Receive = {
 
     case JobsStop =>
-      println ("stop")
+      println ("stop:" + job)
       t2.cancel()
       self ! PoisonPill
   }

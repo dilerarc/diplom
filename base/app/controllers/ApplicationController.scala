@@ -9,10 +9,6 @@ import models._
 
 object ApplicationController extends Controller {
 
-  val taskForm = Form (
-    "label" -> nonEmptyText
-  )
-
   def sign = Action {
     Ok(views.html.sign())
   }
@@ -24,5 +20,4 @@ object ApplicationController extends Controller {
   def index = Action {
     Redirect(routes.ApplicationController.home)
   }
-
 }
