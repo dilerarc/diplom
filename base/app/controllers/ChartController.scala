@@ -1,24 +1,28 @@
 package controllers
 
 import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
 
 import models._
-import java.util.Date
+import org.joda.time.DateTime
+import com.github.nscala_time.time.Imports._
 
 object ChartController extends Controller {
 
   def show(itemId: String) = Action {
     Item.get(itemId)
       .fold(Redirect(routes.ItemController.all))(
-        entity => Ok(views.html.chart.show(entity, MonitoringData.find(entity._id.toString))))
+        entity => Ok(views.html.chart.show(entity)))
   }
 
-  def getAdditionalData(itemId:String, time:String) = Action {
-      Item.get(itemId)
+
+  def get(itemId: String) = Action {
+    Item.get(itemId)
       .fold(Ok("ERROR"))(
-        entity => Ok(MonitoringData.find(entity._id.toString, new Date(time.toLong))))
+        entity => {
+          val to = DateTime.now
+          val from = to - 1.hours
+          Ok(MonitoringData.find(entity._id.toString, from, to))
+        })
   }
 
 }

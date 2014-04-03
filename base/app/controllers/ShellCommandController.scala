@@ -9,8 +9,16 @@ import models._
 
 object ShellCommandController extends Controller {
 
-  val form = Form(
-    "command" -> nonEmptyText
+  val form: Form[ShellCommand] = Form(
+    mapping(
+      "name" -> nonEmptyText,
+      "command" -> nonEmptyText
+    ) {
+      (name, command) =>
+        ShellCommand(name, command)
+    } {
+      item => Some(item.name, item.command)
+    }
   )
 
   def all = Action {
@@ -24,7 +32,7 @@ object ShellCommandController extends Controller {
   def edit(id: String) = Action {
     ShellCommand.get(id)
       .fold(Redirect(routes.ShellCommandController.all))(
-        entity => Ok(views.html.shell_command.edit(entity, form.fill(entity.command))))
+        entity => Ok(views.html.shell_command.edit(entity, form.fill(entity))))
   }
 
   def saveNew = Action {
@@ -32,7 +40,7 @@ object ShellCommandController extends Controller {
       form.bindFromRequest.fold(
         errors => BadRequest(views.html.shell_command.create(errors)),
         command => {
-          ShellCommand.create(ShellCommand(command))
+          ShellCommand.create(command)
           Redirect(routes.ShellCommandController.all)
         }
       )
@@ -46,7 +54,7 @@ object ShellCommandController extends Controller {
             form.bindFromRequest.fold(
               errors => BadRequest(views.html.shell_command.edit(entity, errors)),
               command => {
-                ShellCommand.edit(entity.copy(command = command))
+                ShellCommand.edit(command.copy(_id = entity._id))
                 Redirect(routes.ShellCommandController.all)
               }
             )

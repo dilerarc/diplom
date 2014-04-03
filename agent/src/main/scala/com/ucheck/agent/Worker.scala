@@ -4,8 +4,8 @@ import scala.concurrent.duration._
 import akka.actor._
 import com.ucheck.common.{JobsStop, JobResult, Job}
 import scala.sys.process._
-import java.util.Date
 import scala.util.Random
+import org.joda.time.DateTime
 
 class Worker(sender: ActorRef, job: Job) extends Actor {
 
@@ -18,7 +18,7 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
 
     t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
       //sender ! JobResult(job.itemId, format(job.command).!!, new Date())
-      sender ! JobResult(job.itemId, Random.nextLong().toString, new Date())
+      sender ! JobResult(job.itemId, Random.nextLong().toString, DateTime.now)
     }
 
 

@@ -9,7 +9,7 @@ import com.mongodb.casbah.commons.MongoDBObject
 import mongoContext._
 import scala.util.Try
 
-case class ShellCommand(command: String, _id: ObjectId = new ObjectId)
+case class ShellCommand(name:String, command: String, _id: ObjectId = new ObjectId)
 
 object ShellCommandDAO extends SalatDAO[ShellCommand, ObjectId](
   collection = MongoConnection()(

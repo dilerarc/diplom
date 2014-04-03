@@ -1,41 +1,26 @@
-function chart(itemId, label, units, data) {
-
-    var mainData = data.map(function (obj) {
-        return [obj.date, obj.data];
-    });
-
-    var lastDate = mainData[mainData.length - 1][0]
+function chart(itemId, label, units) {
 
     var plot = $.plot("#placeholder", [
         {
-            data: mainData, label: label
+            data: [], label: label + ", " + units
         }
     ], {
         xaxis: {
-            timeformat: "%y-%m-%d %H:%M:%S",
+            timeformat: "%H:%M:%S",
             mode: "time",
-            minTickSize: [ 1, "second" ]/*,
-             min: (new Date(2014, 3, 1, 14, 20, 0, 0)).getTime(),
-             max: (new Date(2014, 3, 1, 14, 21, 0, 0)).getTime()*/
+            minTickSize: [ 1, "second" ]
         }
     });
 
     function update() {
 
-        var newData = JSON.parse(getData(itemId, lastDate));
-
-        newData = newData.map(function (obj) {
+        var newData = JSON.parse(getData(itemId)).map(function (obj) {
             return [obj.date, obj.data];
         });
 
-        if (newData.length > 0) {
-            mainData = mainData.concat(newData);
-            lastDate = newData[newData.length - 1][0];
-        }
-
         plot.setData([
             {
-                data: mainData
+                data: newData, label: label + ", " + units
             }
         ]);
         plot.setupGrid();
@@ -47,13 +32,13 @@ function chart(itemId, label, units, data) {
     update()
 }
 
-function getData(itemId, date) {
+function getData(itemId) {
 
     var result = [];
 
     var request = $.ajax({
         async: false,
-        url: "/charts/{0}/delta?time={1}".format(itemId, date)
+        url: "/charts/{0}/data".format(itemId)
     });
 
     request.done(function (data) {

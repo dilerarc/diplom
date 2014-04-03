@@ -1,4 +1,4 @@
-@(e: ShellCommand, form: Form[String])
+@(e: ShellCommand, form: Form[ShellCommand])
     @import template._
 
     @main(title = "Shell command") {
@@ -8,6 +8,8 @@
                 <h1 id="forms" class="page-header">Shell command</h1>
 
                 @helper.form(routes.ShellCommandController.save(e._id.toString), 'role -> "form") {
+
+                    @text(form("name"), "Name", "Enter name")
 
                     @text(form("command"), "Command text", "Enter command")
 

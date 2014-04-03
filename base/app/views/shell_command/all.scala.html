@@ -11,13 +11,15 @@
                 <table class="table table-condensed">
                     <thead>
                         <tr>
+                            <th>Name</th>
                             <th>Сommand</th>
                         </tr>
                     </thead>
                     <tbody>
                     @for(e <- col) {
                         <tr>
-                            <td><a href="@routes.ShellCommandController.edit(e._id.toString)">@e.command</a></td>
+                            <td><a href="@routes.ShellCommandController.edit(e._id.toString)">@e.name</a></td>
+                            <td>@e.command</td>
                         </tr>
                     }
                     </tbody>

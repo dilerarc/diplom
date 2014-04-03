@@ -1,3 +1,4 @@
+import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers
 import com.novus.salat.{TypeHintFrequency, StringTypeHintStrategy, Context}
 import play.api.Play
 import play.api.Play.current
@@ -12,4 +13,6 @@ package object mongoContext {
     context.registerClassLoader(Play.classloader)
     context
   }
+
+  RegisterJodaTimeConversionHelpers()
 }

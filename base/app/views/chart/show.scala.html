@@ -1,4 +1,4 @@
-@(item: Item, data: String)
+@(item: Item)
 
 @main(title = "New item") {
 
@@ -12,7 +12,7 @@
 
     <script>
 
-        chart('@item._id.toString', '@item.name', '@item.units', @Html(data));
+        chart('@item._id.toString', '@item.name', '@item.units');
 
     </script>
 }

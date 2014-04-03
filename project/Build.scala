@@ -24,6 +24,7 @@ object Dependencies {
   val akkaRemote = "com.typesafe.akka" %% "akka-remote" % "2.2.4"
   val akkaKernel = "com.typesafe.akka" %% "akka-kernel" % "2.2.4"
   val salat = "com.novus" %% "salat" % "1.9.5"
+  val joda = "com.github.nscala-time" %% "nscala-time" % "0.8.0"
 }
 
 object DiplomBuid extends Build {
@@ -33,21 +34,18 @@ object DiplomBuid extends Build {
   import BuildSettings._
 
   val commonDeps = Seq (
-    akkaRemote,
-    akkaKernel
+    joda
   )
 
-  val agentAssemblyDeps = Seq (
+  val agentDeps = commonDeps ++ Seq (
     akkaRemote % "provided",
     akkaKernel % "provided"
   )
 
   val baseDeps = commonDeps ++ Seq (
+    akkaRemote,
+    akkaKernel,
     salat
-  )
-
-  val agentDeps = commonDeps ++ Seq (
-
   )
 
   lazy val diplom = Project (
@@ -59,7 +57,9 @@ object DiplomBuid extends Build {
   lazy val common = Project (
     "common",
     file ("common"),
-    settings = buildSettings
+    settings = buildSettings ++ Seq(
+      libraryDependencies ++= commonDeps
+    )
   )
 
   lazy val agent = Project (
@@ -69,7 +69,7 @@ object DiplomBuid extends Build {
       mainClass := Some("Main.scala"),
       jarName in assembly := "agent.jar",
       assemblyOption in assembly ~= { _.copy(includeScala = false) },
-      libraryDependencies ++= agentAssemblyDeps
+      libraryDependencies ++= agentDeps
 
     )
   ) dependsOn common
@@ -78,5 +78,5 @@ object DiplomBuid extends Build {
     "base",
     file ("base"),
     settings = buildSettings  ++ play.Project.playScalaSettings ++ Seq (libraryDependencies ++= baseDeps)
-  ) dependsOn (common, agent)
+  ) dependsOn common
 }

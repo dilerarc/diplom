@@ -1,8 +1,6 @@
 @(col: List[Host])
 
-
     @main(title = "All hosts") {
-
 
         <div class="container">
             <div class="row">
@@ -24,7 +22,8 @@
                             <td><a href="@routes.HostController.edit(e._id.toString)">@e.name</a></td>
                             <td>@HostGroup.get(e.hostGroupId).get.name</td>
                             <td>@e.ip</td>
-                            <td>@e.active</td>
+                            <td>@(if(e.active) "Enabled" else "Disabled")</td>
+                            <td>@e.description</td>
                         </tr>
                     }
                     </tbody>

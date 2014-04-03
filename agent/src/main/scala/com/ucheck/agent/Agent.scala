@@ -29,13 +29,13 @@ class Agent extends Actor {
         workers += worker
       })
 
-    case JobsStop => {
+    case JobsStop =>
       workers foreach (worker => {
         println(worker)
         worker ! JobsStop
       })
       workers = Set()
-    }
+
 
     case ReceiveTimeout ⇒
       println("timout")
