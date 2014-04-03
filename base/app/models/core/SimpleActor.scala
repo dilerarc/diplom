@@ -1,11 +1,11 @@
-package com.ucheck.agent
+package models.core
 
 import akka.actor._
-import com.ucheck.common.JobsStop
-import com.ucheck.common.Jobs
 import scala.concurrent.duration._
+import com.ucheck.common.{Jobs, JobsStop}
 
-class Agent extends Actor {
+class SimpleActor extends Actor {
+
 
   var workers: Set[ActorRef] = Set()
 
@@ -15,8 +15,7 @@ class Agent extends Actor {
     println("preStart")
   }
 
-  override def receive: Actor.Receive = {
-
+  def receive = {
     case jobs: Jobs =>
 
       println(jobs.jobs)
@@ -26,7 +25,7 @@ class Agent extends Actor {
       workers = Set()
 
       jobs.jobs.foreach(job => {
-        val worker = context.actorOf(Worker(sender, job))
+        val worker = context.actorOf(SimpleWorker(sender, job))
         workers += worker
       })
 
@@ -46,4 +45,8 @@ class Agent extends Actor {
       })
       workers = Set()
   }
+}
+
+object SimpleActor {
+  def apply(): Props = Props(classOf[SimpleActor])
 }

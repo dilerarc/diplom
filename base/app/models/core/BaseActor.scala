@@ -10,8 +10,11 @@ class BaseActor extends Actor {
   import context.dispatcher
 
   var task: Cancellable = null
+  var simpleActor: ActorRef = null
 
   override def preStart(): Unit = {
+    simpleActor = context.actorOf(SimpleActor(), "simpleActor")
+
     task = context.system.scheduler.schedule(0 seconds, 15 seconds) {
       refresh()
     }
@@ -40,15 +43,24 @@ class BaseActor extends Actor {
 
     val items = Item.all()
       .filter(_.active)
-      .filter(_.itemType == ItemType.Agent)
       .filter(item => hosts.contains(item.hostId))
       .groupBy(_.hostId)
 
     items.foreach(
       pair => {
+
         val ip = hosts(pair._1).ip
-        val jobs = pair._2.map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
-        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! Jobs(jobs)
+
+        val agentJobs = pair._2
+          .filter(_.itemType == ItemType.Agent)
+          .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
+        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! Jobs(agentJobs)
+
+        val simpleJobs = pair._2
+          .filter(_.itemType == ItemType.Simple)
+          .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
+
+        simpleActor ! Jobs(simpleJobs)
       })
 
   }
