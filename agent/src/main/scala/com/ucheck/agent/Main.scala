@@ -3,10 +3,12 @@ package com.ucheck.agent
 import akka.actor.{Props, ActorSystem}
 import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
+import java.io.File
 
 class Main extends Bootable {
-
-  val config = ConfigFactory.parseFile(new java.io.File("~/config/agent.conf")).withFallback(ConfigFactory.load())
+  private val file: File = new java.io.File("config/agent.conf")
+  println(file.getAbsolutePath)
+  val config = ConfigFactory.parseFile(file).withFallback(ConfigFactory.load())
 
   val agentSystem = ActorSystem("agentSystem", config)
 

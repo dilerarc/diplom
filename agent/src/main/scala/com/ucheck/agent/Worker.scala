@@ -4,43 +4,47 @@ import scala.concurrent.duration._
 import akka.actor._
 import com.ucheck.common.{JobsStop, JobResult, Job}
 import scala.sys.process._
-import scala.util.Random
 import org.joda.time.DateTime
 
 class Worker(sender: ActorRef, job: Job) extends Actor {
 
   import context.dispatcher
 
-  var t2:Cancellable = null
+  var t2: Cancellable = null
 
   override def preStart(): Unit = {
-    println ("start:" + job)
-
+    println("start:" + job)
     t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
-      //sender ! JobResult(job.itemId, format(job.command).!!, new Date())
-      sender ! JobResult(job.itemId, Random.nextLong().toString, DateTime.now)
+      val format1: ProcessBuilder = format(job.command)
+      println(format1)
+      val s = format1.!!
+      println(s)
+
+      val r = "\\d+".r
+      val result = r.findFirstIn(s).get
+      println(result)
+      sender ! JobResult(job.itemId, result, DateTime.now)
     }
-
-
-
-    /*    val cmd = "atop 0 1" #| "grep java"
-        val output = cmd.!!
-        println(output)*/
   }
 
   override def receive: Actor.Receive = {
 
     case JobsStop =>
-      println ("stop:" + job)
+      println("stop:" + job)
       t2.cancel()
       self ! PoisonPill
   }
 
   private def format(command: String): ProcessBuilder = {
-    command
+    val r = "(\\'{1}.+\\'{1})|([\\w-]+)".r
+    val list = command.split("\\|")
+      .map(_.trim)
+      .map(s => Process(r.findAllIn(s)
+      .map(_.replace("'", "")).toSeq))
+    list.tail.foldLeft(list.head)(_ #| _)
   }
 }
 
 object Worker {
-  def apply(sender:ActorRef, job:Job): Props = Props(classOf[Worker], sender, job)
+  def apply(sender: ActorRef, job: Job): Props = Props(classOf[Worker], sender, job)
 }

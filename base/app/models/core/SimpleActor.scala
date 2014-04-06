@@ -3,22 +3,26 @@ package models.core
 import akka.actor._
 import scala.concurrent.duration._
 import com.ucheck.common.{Jobs, JobsStop}
+import play.api.Logger
 
 class SimpleActor extends Actor {
 
-
   var workers: Set[ActorRef] = Set()
 
-  context.setReceiveTimeout(20 seconds)
-
   override def preStart(): Unit = {
-    println("preStart")
+    context.setReceiveTimeout(20 seconds)
+    Logger.info("Simple actor started.")
+  }
+
+  override def postStop(): Unit = {
+    Logger.info("Simple actor stopped.")
   }
 
   def receive = {
     case jobs: Jobs =>
 
-      println(jobs.jobs)
+      Logger.info(s"Received jobs. Actor: $self, jobs: $jobs.")
+
       workers foreach (worker => {
         worker ! JobsStop
       })
@@ -38,7 +42,7 @@ class SimpleActor extends Actor {
 
 
     case ReceiveTimeout ⇒
-      println("timout")
+      Logger.info(s"Received timeout. Actor: $self.")
 
       workers foreach (worker => {
         worker ! JobsStop
