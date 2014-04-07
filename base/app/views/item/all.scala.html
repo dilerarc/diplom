@@ -18,9 +18,9 @@
                             <th>Data type</th>
                             <th>Units</th>
                             <th>Update interval, s.</th>
-                            <th>Keep period, h.</th>
+                            <th>Keep period, m.</th>
                             <th>Description</th>
-                            <th>Active</th>
+                            <th>State</th>
                             <th>Chart</th>
                         </tr>
                     </thead>
@@ -36,7 +36,7 @@
                             <td>@e.updateInterval</td>
                             <td>@e.keepPeriod</td>
                             <td>@e.description</td>
-                            <td>@e.active</td>
+                            <td>@(if(e.active) "Enabled" else "Disabled")</td>
                             <td><a href="@routes.ChartController.show(e._id.toString)">chart</a></td>
                         </tr>
                     }

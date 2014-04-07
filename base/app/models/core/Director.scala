@@ -5,15 +5,25 @@ import models._
 import scala.concurrent.duration._
 import com.ucheck.common.{Jobs, JobsStop, Job, JobResult}
 import play.api.Logger
+import org.joda.time.DateTime
 
-class BaseActor extends Actor {
+class Director extends Actor {
 
   import context.dispatcher
 
-  var task = context.system.scheduler.schedule(0 seconds, 15 seconds) {
-    refresh()
+  context.system.scheduler.schedule(0 seconds, 15 seconds) {
+    refreshJobs()
   }
-  var simpleActor = context.actorOf(SimpleActor(), "simpleActor")
+
+  context.system.scheduler.schedule(5 seconds, 1 hours) {
+    Item.all().foreach(
+      item => {
+        val date = DateTime.now().minusMinutes(item.keepPeriod.toInt)
+        MonitoringData.clean(item._id.toString, date)
+      })
+  }
+
+  var simpleActor = context.actorOf(Manager(), "manager")
 
   override def preStart(): Unit = {
     Logger.info("Base actor started.")
@@ -28,7 +38,7 @@ class BaseActor extends Actor {
       Logger.info(s"Received jobs stop. Actor: $self.")
 
       val ip = Host.get(jobsStop.host).get.ip
-      context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! jobsStop
+      context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! jobsStop
 
     case result: JobResult =>
       Logger.info(s"Received job result. Actor: $self, result: $result.")
@@ -37,7 +47,7 @@ class BaseActor extends Actor {
 
   }
 
-  private def refresh() = {
+  private def refreshJobs() = {
 
     val hosts = Host.all()
       .filter(_.active)
@@ -61,15 +71,15 @@ class BaseActor extends Actor {
         val agentJobs = pair._2
           .filter(_.itemType == ItemType.Agent)
           .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
-        Logger.info("Senting jobs to remote agents")
+        Logger.info("Senting jobs to remote manager")
         Logger.info(agentJobs.toString())
-        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/agentActor") ! Jobs(agentJobs)
+        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! Jobs(agentJobs)
 
         val simpleJobs = pair._2
           .filter(_.itemType == ItemType.Simple)
           .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
 
-        Logger.info("Senting jobs to local agents")
+        Logger.info("Senting jobs to local manager")
         Logger.info(simpleJobs.toString())
         simpleActor ! Jobs(simpleJobs)
       })

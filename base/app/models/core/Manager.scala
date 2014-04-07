@@ -5,7 +5,7 @@ import scala.concurrent.duration._
 import com.ucheck.common.{Jobs, JobsStop}
 import play.api.Logger
 
-class SimpleActor extends Actor {
+class Manager extends Actor {
 
   var workers: Set[ActorRef] = Set()
 
@@ -29,7 +29,7 @@ class SimpleActor extends Actor {
       workers = Set()
 
       jobs.jobs.foreach(job => {
-        val worker = context.actorOf(SimpleWorker(sender, job))
+        val worker = context.actorOf(Worker(sender, job))
         workers += worker
       })
 
@@ -51,6 +51,6 @@ class SimpleActor extends Actor {
   }
 }
 
-object SimpleActor {
-  def apply(): Props = Props(classOf[SimpleActor])
+object Manager {
+  def apply(): Props = Props(classOf[Manager])
 }

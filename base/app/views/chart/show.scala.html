@@ -5,6 +5,8 @@
     <div class="container">
         <div class="row">
 
+            <input id="period" value="5"/> Period in minutes
+
             <div id="placeholder" class="placeholder"></div>
 
         </div>
@@ -12,7 +14,7 @@
 
     <script>
 
-        chart('@item._id.toString', '@item.name', '@item.units');
+        chart('@item._id.toString', '@item.name', '@item.units', $('#period').val());
 
     </script>
 }

@@ -4,6 +4,7 @@ import play.api.Play
 import play.api.Play.current
 
 package object mongoContext {
+
   implicit val context = {
     val context = new Context {
       val name = "global"

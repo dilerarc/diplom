@@ -1,4 +1,4 @@
-function chart(itemId, label, units) {
+function chart(itemId, label, units, period) {
 
     var plot = $.plot("#placeholder", [
         {
@@ -14,7 +14,7 @@ function chart(itemId, label, units) {
 
     function update() {
 
-        var newData = JSON.parse(getData(itemId)).map(function (obj) {
+        var newData = JSON.parse(getData(itemId, period)).map(function (obj) {
             return [obj.date, obj.data];
         });
 
@@ -32,13 +32,13 @@ function chart(itemId, label, units) {
     update()
 }
 
-function getData(itemId) {
+function getData(itemId, period) {
 
     var result = [];
 
     var request = $.ajax({
         async: false,
-        url: "/charts/{0}/data".format(itemId)
+        url: "/charts/{0}/data?period={1}".format(itemId, period)
     });
 
     request.done(function (data) {

@@ -5,16 +5,15 @@ import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 import java.io.File
 
-class Main extends Bootable {
-  private val file: File = new java.io.File("config/agent.conf")
-  println(file.getAbsolutePath)
-  val config = ConfigFactory.parseFile(file).withFallback(ConfigFactory.load())
+class App extends Bootable {
+
+  val config = ConfigFactory.parseFile( new java.io.File("config/agent.conf")).withFallback(ConfigFactory.load())
 
   val agentSystem = ActorSystem("agentSystem", config)
 
   def startup() = {
     println("Agent system started.")
-    agentSystem.actorOf(Props[Agent], "agentActor")
+    agentSystem.actorOf(Props[Manager], "manager")
   }
 
   def shutdown() = {

@@ -7,15 +7,29 @@ import scala.util.Random
 import org.joda.time.DateTime
 import scala.sys.process.ProcessBuilder
 import play.api.Logger
+import com.ucheck.agent._
+import com.ucheck.common.JobsStop
+import com.ucheck.common.Job
+import com.ucheck.common.JobResult
 
-class SimpleWorker(sender: ActorRef, job: Job) extends Actor {
+class Worker(sender: ActorRef, job: Job) extends Actor {
 
   import context.dispatcher
 
   var t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
-    //sender ! JobResult(job.itemId, format(job.command).!!, new Date())
-    //fping -t 100 ya.ru
-    sender ! JobResult(job.itemId, Random.nextLong().toString, DateTime.now)
+
+    val format1: ProcessBuilder = F.format(job.command)
+    println(format1)
+    val s = format1.!!
+    println(s)
+
+    val r = "\\d+".r
+    val result = r.findFirstIn(s).get
+    println(result)
+
+    val res = if(result.contains("alive")) "1" else "0"
+
+    sender ! JobResult(job.itemId, res, DateTime.now)
   }
 
   override def preStart(): Unit = {
@@ -37,6 +51,6 @@ class SimpleWorker(sender: ActorRef, job: Job) extends Actor {
 }
 
 
-object SimpleWorker {
-  def apply(sender:ActorRef, job:Job): Props = Props(classOf[SimpleWorker], sender, job)
+object Worker {
+  def apply(sender:ActorRef, job:Job): Props = Props(classOf[Worker], sender, job)
 }

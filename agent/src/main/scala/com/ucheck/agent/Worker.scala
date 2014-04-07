@@ -15,7 +15,8 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
   override def preStart(): Unit = {
     println("start:" + job)
     t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
-      val format1: ProcessBuilder = format(job.command)
+      //sudo atop 0 1 -PPRM | grep java | awk '{print $12}'
+      val format1: ProcessBuilder = F.format(job.command)
       println(format1)
       val s = format1.!!
       println(s)
@@ -33,15 +34,6 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
       println("stop:" + job)
       t2.cancel()
       self ! PoisonPill
-  }
-
-  private def format(command: String): ProcessBuilder = {
-    val r = "(\\'{1}.+\\'{1})|([\\w-]+)".r
-    val list = command.split("\\|")
-      .map(_.trim)
-      .map(s => Process(r.findAllIn(s)
-      .map(_.replace("'", "")).toSeq))
-    list.tail.foldLeft(list.head)(_ #| _)
   }
 }
 

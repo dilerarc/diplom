@@ -56,6 +56,5 @@ object ItemType extends Enumeration {
 
 object DataType extends Enumeration {
   val Number = Value("Number")
-  val Boolean = Value("Boolean")
   val String = Value("String")
 }

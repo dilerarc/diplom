@@ -1,11 +1,10 @@
 package com.ucheck.agent
 
 import akka.actor._
-import com.ucheck.common.JobsStop
-import com.ucheck.common.Jobs
+import com.ucheck.common.{JobsStop, Jobs}
 import scala.concurrent.duration._
 
-class Agent extends Actor {
+class Manager extends Actor {
 
   var workers: Set[ActorRef] = Set()
 

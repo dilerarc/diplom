@@ -20,6 +20,10 @@ object MonitoringDataDAO extends SalatDAO[MonitoringData, ObjectId](
 
 object MonitoringData {
 
+  def clean(itemId: String, date: DateTime):Unit = {
+    MonitoringDataDAO.remove(MongoDBObject("itemId" -> itemId) ++ ("date" $lt date))
+  }
+
   def all(): List[MonitoringData] = MonitoringDataDAO.find(MongoDBObject.empty).toList
 
   def find(itemId: String, from:DateTime, to:DateTime): String = {
@@ -31,7 +35,4 @@ object MonitoringData {
   def create(e: MonitoringData) = {
     MonitoringDataDAO.insert(e)
   }
-
-
-
 }
