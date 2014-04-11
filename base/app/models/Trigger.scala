@@ -12,8 +12,11 @@ case class Trigger(name: String,
                    itemId: String,
                    value: String,
                    compareType: CompareType.Value,
+                   active: Boolean,
                    _id: ObjectId = new ObjectId)
 
+case class Triggers(triggers: Set[Trigger])
+case class TriggerCheckResult(itemId:String, data:List[MonitoringData])
 
 object TriggerDAO extends SalatDAO[Trigger, ObjectId](
   collection = MongoConnection()(
@@ -40,9 +43,13 @@ object Trigger {
   def delete(id: String) {
     TriggerDAO.remove(MongoDBObject("_id" -> new ObjectId(id)))
   }
+
 }
 
 object CompareType extends Enumeration {
+
+  type CompareType = Value
+
   val Eq = Value("Equal")
   val Ge = Value("Greater or equal")
   val Le = Value("Lesser or equal")

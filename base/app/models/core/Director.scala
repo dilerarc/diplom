@@ -23,7 +23,7 @@ class Director extends Actor {
       })
   }
 
-  var simpleActor = context.actorOf(Manager(), "manager")
+  val localManager = context.actorOf(Manager(), "localManager")
 
   override def preStart(): Unit = {
     Logger.info("Base actor started.")
@@ -36,14 +36,15 @@ class Director extends Actor {
   def receive = {
     case jobsStop: JobsStop =>
       Logger.info(s"Received jobs stop. Actor: $self.")
-
       val ip = Host.get(jobsStop.host).get.ip
       context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! jobsStop
 
     case result: JobResult =>
       Logger.info(s"Received job result. Actor: $self, result: $result.")
-
       MonitoringData.create(MonitoringData(result.itemId, result.data, result.date))
+
+    case triggerCheckResult: TriggerCheckResult =>
+      //send email
 
   }
 
@@ -71,7 +72,7 @@ class Director extends Actor {
         val agentJobs = pair._2
           .filter(_.itemType == ItemType.Agent)
           .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
-        Logger.info("Senting jobs to remote manager")
+        Logger.info("Sending jobs to remote manager")
         Logger.info(agentJobs.toString())
         context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! Jobs(agentJobs)
 
@@ -79,10 +80,13 @@ class Director extends Actor {
           .filter(_.itemType == ItemType.Simple)
           .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
 
-        Logger.info("Senting jobs to local manager")
+        Logger.info("Sending jobs to local manager")
         Logger.info(simpleJobs.toString())
-        simpleActor ! Jobs(simpleJobs)
+        localManager ! Jobs(simpleJobs)
+
       })
 
+
+      localManager ! Triggers(Trigger.all().filter(_.active).toSet)
   }
 }

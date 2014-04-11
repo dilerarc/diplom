@@ -8,12 +8,14 @@ import play.api.Play.current
 import com.mongodb.casbah.commons.MongoDBObject
 import scala.util.Try
 import mongoContext._
+import models.ItemType.ItemType
+import models.DataType.DataType
 
 case class Item(name: String,
                 hostId: String,
-                itemType: ItemType.Value,
+                itemType: ItemType,
                 commandId: String,
-                dataType: DataType.Value,
+                dataType: DataType,
                 units: String,
                 updateInterval: Long,
                 keepPeriod: Long,
@@ -50,11 +52,19 @@ object Item {
 }
 
 object ItemType extends Enumeration {
+
+  type ItemType = Value
+
   val Simple = Value("Simple")
   val Agent = Value("Agent")
+  val SNMP = Value("SNMP")
 }
 
 object DataType extends Enumeration {
+
+  type DataType = Value
+
   val Number = Value("Number")
   val String = Value("String")
+  val Boolean = Value("Boolean")
 }

@@ -12,32 +12,20 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Host</th>
-                            <th>Type</th>
-                            <th>Command</th>
-                            <th>Data type</th>
-                            <th>Units</th>
-                            <th>Update interval, s.</th>
-                            <th>Keep period, m.</th>
-                            <th>Description</th>
+                            <th>Item</th>
+                            <th>Value</th>
+                            <th>Compare</th>
                             <th>State</th>
-                            <th>Chart</th>
                         </tr>
                     </thead>
                     <tbody>
                     @for(e <- col) {
                         <tr>
                             <td><a href="@routes.TriggerController.edit(e._id.toString)">@e.name</a></td>
-                            <td>@Host.get(e.hostId).get.name</td>
-                            <td>@e.triggerType</td>
-                            <td>@ShellCommand.get(e.commandId).get.command</td>
-                            <td>@e.dataType</td>
-                            <td>@e.units</td>
-                            <td>@e.updateInterval</td>
-                            <td>@e.keepPeriod</td>
-                            <td>@e.description</td>
+                            <td>@Item.get(e.itemId).get.name</td>
+                            <td>@e.value</td>
+                            <td>@e.compareType</td>
                             <td>@(if(e.active) "Enabled" else "Disabled")</td>
-                            <td><a href="@routes.ChartController.show(e._id.toString)">chart</a></td>
                         </tr>
                     }
                     </tbody>

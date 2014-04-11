@@ -19,30 +19,25 @@ class Manager extends Actor {
     case jobs: Jobs =>
 
       println(jobs.jobs)
-      workers foreach (worker => {
-        worker ! JobsStop
-      })
-      workers = Set()
+      stop()
 
       jobs.jobs.foreach(job => {
         val worker = context.actorOf(Worker(sender, job))
         workers += worker
       })
 
-    case JobsStop =>
-      workers foreach (worker => {
-        println(worker)
-        worker ! JobsStop
-      })
-      workers = Set()
+    case JobsStop => stop()
 
 
     case ReceiveTimeout ⇒
-      println("timout")
+      println("timeout")
+      stop()
+  }
 
-      workers foreach (worker => {
-        worker ! JobsStop
-      })
-      workers = Set()
+  private def stop() {
+    workers foreach (worker => {
+      worker ! JobsStop
+    })
+    workers = Set()
   }
 }

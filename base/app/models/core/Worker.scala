@@ -34,11 +34,11 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
 
   override def preStart(): Unit = {
     context.setReceiveTimeout(20 seconds)
-    Logger.info("Simple worker started.")
+    Logger.info("Worker started.")
   }
 
   override def postStop(): Unit = {
-    Logger.info("Simple worker stopped.")
+    Logger.info("Worker stopped.")
   }
 
   override def receive: Actor.Receive = {
@@ -49,7 +49,6 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
       self ! PoisonPill
   }
 }
-
 
 object Worker {
   def apply(sender:ActorRef, job:Job): Props = Props(classOf[Worker], sender, job)

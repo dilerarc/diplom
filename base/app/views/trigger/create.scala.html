@@ -1,37 +1,25 @@
 @(
-        hosts: List[Host],
-        itemTypes: Seq[ItemType.Value],
-        dataTypes: Seq[DataType.Value],
-        commands: List[ShellCommand],
-        form: Form[Item])
+        compareTypes: Seq[CompareType.Value],
+        items: List[Item],
+        form: Form[Trigger])
 
     @import template._
 
-    @main(title = "New item") {
+    @main(title = "New trigger") {
 
         <div class="container">
             <div class="row">
-                <h1 id="forms" class="page-header">New item</h1>
+                <h1 id="forms" class="page-header">New trigger</h1>
 
-                @helper.form(routes.ItemController.saveNew, 'role -> "form") {
+                @helper.form(routes.TriggerController.saveNew, 'role -> "form") {
 
                     @text(form("name"), "Name", "Enter name")
 
-                    @select(form("hostId"), "Host", hosts.map(h => (h.name, h._id.toString)))
+                    @select(form("itemId"), "Item", items.map(i => (i.name, i._id.toString)))
 
-                    @select(form("itemType"), "Type", itemTypes.map(it => (it.toString, it.toString)))
+                    @text(form("value"), "Value", "Enter value")
 
-                    @select(form("commandId"), "Command", commands.map(c => (c.command, c._id.toString)))
-
-                    @select(form("dataType"), "Data type", dataTypes.map(d => (d.toString, d.toString)))
-
-                    @text(form("units"), "Units", "Enter units")
-
-                    @text(form("updateInterval"), "Update interval", "Enter number")
-
-                    @text(form("keepPeriod"), "Keep period", "Enter number")
-
-                    @text(form("description"), "Description", "Enter description")
+                    @select(form("compareType"), "Type", compareTypes.map(ct => (ct.toString, ct.toString)))
 
                     @checkbox(form("active"), "Active")
 
