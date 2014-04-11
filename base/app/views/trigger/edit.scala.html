@@ -1,0 +1,46 @@
+@(
+        e: Item,
+        hosts: List[Host],
+        itemTypes: Seq[ItemType.Value],
+        dataTypes: Seq[DataType.Value],
+        commands: List[ShellCommand],
+        form: Form[Item])
+
+    @import template._
+
+    @main(title = "Item") {
+
+        <div class="container">
+            <div class="row">
+                <h1 id="forms" class="page-header">Item</h1>
+
+                @helper.form(routes.ItemController.save(e._id.toString), 'role -> "form") {
+
+                    @text(form("name"), "Name", "Enter name")
+
+                    @select(form("hostId"), "Host", hosts.map(h => (h.name, h._id.toString)))
+
+                    @select(form("itemType"), "Type", itemTypes.map(it => (it.toString, it.toString)))
+
+                    @select(form("commandId"), "Command", commands.map(c => (c.command, c._id.toString)))
+
+                    @select(form("dataType"), "Data type", dataTypes.map(d => (d.toString, d.toString)))
+
+                    @text(form("units"), "Units", "Enter units")
+
+                    @text(form("updateInterval"), "Update interval", "Enter number")
+
+                    @text(form("keepPeriod"), "Keep period", "Enter number")
+
+                    @text(form("description"), "Description", "Enter description")
+
+                    @checkbox(form("active"), "Active")
+
+                    <button type="submit" class="btn btn-default">Submit</button>
+
+                }
+
+            </div>
+        </div>
+
+    }
