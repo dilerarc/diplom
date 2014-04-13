@@ -24,6 +24,7 @@ class Director extends Actor {
   }
 
   val localManager = context.actorOf(Manager(), "localManager")
+  val statsHandler = context.actorOf(StatsHandler(), "statsHandler")
 
   override def preStart(): Unit = {
     Logger.info("Base actor started.")
@@ -38,10 +39,11 @@ class Director extends Actor {
       Logger.info(s"Received jobs stop. Actor: $self.")
       val ip = Host.get(jobsStop.host).get.ip
       context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! jobsStop
+      //TODO devide local and remote jobs stop
 
     case result: JobResult =>
       Logger.info(s"Received job result. Actor: $self, result: $result.")
-      MonitoringData.create(MonitoringData(result.itemId, result.data, result.date))
+      statsHandler ! result
 
     case triggerCheckResult: TriggerCheckResult =>
       //send email

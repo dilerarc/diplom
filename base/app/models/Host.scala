@@ -16,8 +16,6 @@ case class Host(name: String,
                 description: String,
                 _id: ObjectId = new ObjectId)
 
-case class AgentInterface(name:Option[String], port: Int)
-
 object HostDAO extends SalatDAO[Host, ObjectId](
   collection = MongoConnection()(
     current.configuration.getString("mongodb.default.db")
