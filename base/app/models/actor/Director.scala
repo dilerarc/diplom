@@ -1,11 +1,19 @@
-package models.core
+package models.actor
 
 import akka.actor._
 import models._
 import scala.concurrent.duration._
-import com.ucheck.common.{Jobs, JobsStop, Job, JobResult}
+import com.ucheck.common._
 import play.api.Logger
 import org.joda.time.DateTime
+import models.util.EmailSender
+import models.TriggerCheckResult
+import models.Triggers
+import com.ucheck.common.JobsStop
+import com.ucheck.common.Job
+import com.ucheck.common.Jobs
+import com.ucheck.common.JobResult
+import play.api.i18n.Messages
 
 class Director extends Actor {
 
@@ -39,14 +47,18 @@ class Director extends Actor {
       Logger.info(s"Received jobs stop. Actor: $self.")
       val ip = Host.get(jobsStop.host).get.ip
       context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! jobsStop
-      //TODO devide local and remote jobs stop
 
     case result: JobResult =>
       Logger.info(s"Received job result. Actor: $self, result: $result.")
       statsHandler ! result
 
     case triggerCheckResult: TriggerCheckResult =>
-      //send email
+      Logger.info(s"Received trigger check result. Actor: $self.")
+      val report = s"Item: ${triggerCheckResult.itemId}, data: [${triggerCheckResult.data.toString()}]"
+      EmailSender.sendEmail(Email(
+        Messages("contact.request.subject", DateTime.now()),
+        Messages("contact.request.email.recipient"),
+        Messages("contact.request.email.recipient", report)))
 
   }
 

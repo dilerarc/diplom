@@ -1,8 +1,8 @@
-package models.core
+package models.actor
 
 import akka.actor._
 import scala.concurrent.duration._
-import com.ucheck.common.{Jobs, JobsStop}
+import com.ucheck.common.{JobsStopAll, Jobs, JobsStop}
 import play.api.Logger
 import models.Triggers
 import scala.collection.mutable
@@ -32,7 +32,17 @@ class Manager extends Actor {
         simpleWorkers += worker
       })
 
-    case JobsStop => stop(simpleWorkers)
+    case js: JobsStop =>
+      Logger.info(s"Received jobs stop. Actor: $self.")
+      simpleWorkers foreach (_ ! js)
+      snmpWorkers foreach (_ ! js)
+      triggerWorkers foreach (_ ! js)
+
+    case jsa: JobsStopAll =>
+      Logger.info(s"Received all jobs stop. Actor: $self.")
+      simpleWorkers foreach (_ ! jsa)
+      snmpWorkers foreach (_ ! jsa)
+      triggerWorkers foreach (_ ! jsa)
 
     case triggers: Triggers =>
       Logger.info(s"Received triggers. Actor: $self, triggers: $triggers.")
@@ -52,7 +62,7 @@ class Manager extends Actor {
 
   private def stop(workers: mutable.Set[ActorRef]) {
     workers foreach (worker => {
-      worker ! JobsStop
+      worker ! JobsStopAll
     })
     workers.clear()
   }

@@ -1,4 +1,4 @@
-package models.core
+package models.actor
 
 import scala.concurrent.duration._
 import akka.actor._

@@ -1,0 +1,5 @@
+#e-mail
+contact.request.email.recipient=admin@host.com
+contact.request.email.from=noreply@base.com
+contact.request.subject=Monitoring report for {0}
+contact.request.body=Content: {0}.

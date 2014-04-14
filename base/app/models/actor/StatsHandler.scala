@@ -1,4 +1,4 @@
-package models.core
+package models.actor
 
 import akka.actor._
 import models._

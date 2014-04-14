@@ -25,6 +25,7 @@ object Dependencies {
   val akkaKernel = "com.typesafe.akka" %% "akka-kernel" % "2.2.4"
   val salat = "com.novus" %% "salat" % "1.9.5"
   val joda = "com.github.nscala-time" %% "nscala-time" % "0.8.0"
+  val mailer = "com.typesafe" %% "play-plugins-mailer" % "2.1-RC2"
 }
 
 object DiplomBuid extends Build {
@@ -45,7 +46,8 @@ object DiplomBuid extends Build {
   val baseDeps = commonDeps ++ Seq (
     akkaRemote,
     akkaKernel,
-    salat
+    salat,
+    mailer
   )
 
   lazy val diplom = Project (

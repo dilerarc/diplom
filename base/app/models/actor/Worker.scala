@@ -1,8 +1,8 @@
-package models.core
+package models.actor
 
 import scala.concurrent.duration._
 import akka.actor._
-import com.ucheck.common.{Job, JobsStop, JobResult}
+import com.ucheck.common._
 import scala.util.Random
 import org.joda.time.DateTime
 import scala.sys.process.ProcessBuilder
@@ -11,6 +11,7 @@ import com.ucheck.agent._
 import com.ucheck.common.JobsStop
 import com.ucheck.common.Job
 import com.ucheck.common.JobResult
+import models.Item
 
 class Worker(sender: ActorRef, job: Job) extends Actor {
 
@@ -33,7 +34,6 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
   }
 
   override def preStart(): Unit = {
-    context.setReceiveTimeout(20 seconds)
     Logger.info("Worker started.")
   }
 
@@ -42,8 +42,14 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
   }
 
   override def receive: Actor.Receive = {
-    case JobsStop =>
+    case JobsStop(host) => if(Item.get(job.itemId).get.hostId == host)
       Logger.info(s"Received jobs stop. Actor: $self.")
+
+      t2.cancel()
+      self ! PoisonPill
+
+    case JobsStopAll =>
+      Logger.info(s"Received all jobs stop. Actor: $self.")
 
       t2.cancel()
       self ! PoisonPill

@@ -1,7 +1,8 @@
 package com.ucheck.agent
 
 import akka.actor._
-import com.ucheck.common.{JobsStop, Jobs}
+import com.ucheck.common.{JobsStopAll, JobsStop, Jobs}
+import play.api.Logger
 import scala.concurrent.duration._
 
 class Manager extends Actor {
@@ -26,8 +27,11 @@ class Manager extends Actor {
         workers += worker
       })
 
-    case JobsStop => stop()
+    case js: JobsStop =>
+      workers foreach (_ ! js)
 
+    case jsa: JobsStopAll =>
+      workers foreach (_ ! jsa)
 
     case ReceiveTimeout ⇒
       println("timeout")
@@ -36,7 +40,7 @@ class Manager extends Actor {
 
   private def stop() {
     workers foreach (worker => {
-      worker ! JobsStop
+      worker ! JobsStopAll
     })
     workers = Set()
   }
