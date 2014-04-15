@@ -9,3 +9,17 @@ body {
     font-size: 14px;
     line-height: 1.2em;
 }
+
+.placeholderAll {
+    margin-top: 50px;
+    width: 100%;
+    height: 200px;
+    font-size: 14px;
+    line-height: 1.2em;
+}
+
+.forms {
+    position: relative;
+    padding: 45px 45px 15px;
+    margin: 0 -15px 15px;
+}

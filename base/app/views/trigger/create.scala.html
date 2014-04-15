@@ -7,26 +7,29 @@
 
     @main(title = "New trigger") {
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <h1 id="forms" class="page-header">New trigger</h1>
+                <div class="col-md-12">
 
-                @helper.form(routes.TriggerController.saveNew, 'role -> "form") {
+                    <h1 id="forms" class="page-header">New trigger</h1>
 
-                    @text(form("name"), "Name", "Enter name")
+                    @helper.form(routes.TriggerController.saveNew, 'role -> "form") {
 
-                    @select(form("itemId"), "Item", items.map(i => (i.name, i._id.toString)))
+                        @text(form("name"), "Name", "Enter name")
 
-                    @text(form("value"), "Value", "Enter value")
+                        @select(form("itemId"), "Item", items.map(i => (i.name, i._id.toString)))
 
-                    @select(form("compareType"), "Type", compareTypes.map(ct => (ct.toString, ct.toString)))
+                        @text(form("value"), "Value", "Enter value")
 
-                    @checkbox(form("active"), "Active")
+                        @select(form("compareType"), "Type", compareTypes.map(ct => (ct.toString, ct.toString)))
 
-                    <button type="submit" class="btn btn-default">Submit</button>
+                        @checkbox(form("active"), "Active")
 
-                }
+                        <button type="submit" class="btn btn-default">Submit</button>
 
+                    }
+
+                </div>
             </div>
         </div>
 

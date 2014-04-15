@@ -1,20 +1,28 @@
 @(item: Item)
 
-@main(title = "New item") {
+    @main(title = s"Chart for ${item.name}") {
 
-    <div class="container">
-        <div class="row">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
 
-            <input id="period" value="5"/> Period in minutes
+                    <div class="forms">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <label class="sr-only" for="period">Period</label>
+                                <input id="period" value="5" class="form-control" placeholder="Enter period">
+                            </div>
+                            <button type="submit" class="btn btn-default">Apply period</button>
+                        </form>
+                    </div>
 
-            <div id="placeholder" class="placeholder"></div>
+                    <div id="placeholder" class="placeholder"></div>
 
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script>
-
-        chart('@item._id.toString', '@item.name', '@item.units', $('#period').val());
-
-    </script>
-}
+        <script>
+            chart('@item._id.toString ', '@item.name', '@item.units', $('#period').val(), 'placeholder');
+        </script>
+    }

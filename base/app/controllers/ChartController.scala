@@ -15,6 +15,9 @@ object ChartController extends Controller {
         entity => Ok(views.html.chart.show(entity)))
   }
 
+  def showMulti(itemGroupId: String) = Action {
+    Ok(views.html.chart.showMulti(Item.getByItemGroup(itemGroupId)))
+  }
 
   def get(itemId: String, minutes: String) = Action {
     var m = Try(minutes.toInt).getOrElse(5)

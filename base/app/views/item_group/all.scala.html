@@ -1,0 +1,33 @@
+@(col: List[ItemGroup])
+
+
+@main(title = "All item groups") {
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <h1 id="forms" class="page-header">All item groups</h1>
+                <p><a href="@routes.ItemGroupController.showNew" class="btn btn-default">New item group</a></p>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Charts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for(e <- col) {
+                        <tr>
+                            <td><a href="@routes.ItemGroupController.edit(e._id.toString)">@e.name</a></td>
+                            <td><a href="@routes.ChartController.showMulti(e._id.toString)">chart</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+}

@@ -2,14 +2,13 @@ package com.ucheck.agent
 
 import akka.actor._
 import com.ucheck.common.{JobsStopAll, JobsStop, Jobs}
-import play.api.Logger
 import scala.concurrent.duration._
 
 class Manager extends Actor {
 
   var workers: Set[ActorRef] = Set()
 
-  context.setReceiveTimeout(20 seconds)
+  context.setReceiveTimeout(20.seconds)
 
   override def preStart(): Unit = {
     println("preStart")

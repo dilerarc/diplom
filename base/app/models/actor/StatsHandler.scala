@@ -11,7 +11,7 @@ class StatsHandler extends Actor {
 
   import context.dispatcher
 
-  context.system.scheduler.schedule(5 seconds, 1 hours) {
+  context.system.scheduler.schedule(5.seconds, 1.hours) {
     Item.all().foreach(
       item => {
         val date = DateTime.now().minusMinutes(item.keepPeriod.toInt)

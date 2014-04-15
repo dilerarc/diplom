@@ -18,7 +18,7 @@ class TriggerWorker(sender: ActorRef, trigger: Trigger) extends Actor {
 
   var date:DateTime = DateTime.now()
 
-  var t2 = context.system.scheduler.schedule(1 seconds, 10 seconds) {
+  var t2 = context.system.scheduler.schedule(1.seconds, 10.seconds) {
 
     val res = MonitoringData.find(trigger.itemId, date , DateTime.now(), trigger.value, trigger.compareType)
     date = DateTime.now()
@@ -26,7 +26,7 @@ class TriggerWorker(sender: ActorRef, trigger: Trigger) extends Actor {
   }
 
   override def preStart(): Unit = {
-    context.setReceiveTimeout(20 seconds)
+    context.setReceiveTimeout(20.seconds)
     Logger.info("Trigger worker started.")
   }
 

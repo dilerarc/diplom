@@ -1,10 +1,12 @@
 @(hostGroups: List[HostGroup], form: Form[Host])
-    @import template._
+@import template._
 
-    @main(title = "New host") {
+@main(title = "New host") {
 
-        <div class="container">
-            <div class="row">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
                 <h1 id="forms" class="page-header">New host</h1>
 
                 @helper.form(routes.HostController.saveNew, 'role -> "form") {
@@ -25,5 +27,6 @@
 
             </div>
         </div>
+    </div>
 
-    }
+}

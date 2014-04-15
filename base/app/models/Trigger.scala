@@ -7,6 +7,7 @@ import com.mongodb.casbah.MongoConnection
 import play.api.Play._
 import play.api.PlayException
 import scala.util.Try
+import mongoContext._
 
 case class Trigger(name: String,
                    itemId: String,
@@ -47,9 +48,6 @@ object Trigger {
 }
 
 object CompareType extends Enumeration {
-
-  type CompareType = Value
-
   val Eq = Value("Equal")
   val Ge = Value("Greater or equal")
   val Le = Value("Lesser or equal")

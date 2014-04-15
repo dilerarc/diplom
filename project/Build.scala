@@ -12,7 +12,8 @@ object BuildSettings {
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
     version      := buildVersion,
-    scalaVersion := buildScalaVersion
+    scalaVersion := buildScalaVersion,
+    scalacOptions ++= Seq("-feature")
   )
 }
 
@@ -79,6 +80,8 @@ object DiplomBuid extends Build {
   lazy val base = Project (
     "base",
     file ("base"),
-    settings = buildSettings  ++ play.Project.playScalaSettings ++ Seq (libraryDependencies ++= baseDeps)
+    settings = buildSettings  ++ play.Project.playScalaSettings ++ Seq (
+      libraryDependencies ++= baseDeps
+    )
   ) dependsOn common
 }

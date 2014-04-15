@@ -8,14 +8,13 @@ import play.api.Play.current
 import com.mongodb.casbah.commons.MongoDBObject
 import scala.util.Try
 import mongoContext._
-import models.ItemType.ItemType
-import models.DataType.DataType
 
 case class Item(name: String,
                 hostId: String,
-                itemType: ItemType,
+                itemGroupId: String,
+                itemType: ItemType.Value,
                 commandId: String,
-                dataType: DataType,
+                dataType: DataType.Value,
                 units: String,
                 updateInterval: Long,
                 keepPeriod: Long,
@@ -46,24 +45,22 @@ object Item {
     Try(ItemDAO.findOneById(new ObjectId(id))) getOrElse None
   }
 
+  def getByItemGroup(itemGroupId: String): List[Item] = {
+    ItemDAO.find(MongoDBObject("itemGroupId" -> new ObjectId(itemGroupId))).toList
+  }
+
   def delete(id: String) {
     ItemDAO.remove(MongoDBObject("_id" -> new ObjectId(id)))
   }
 }
 
 object ItemType extends Enumeration {
-
-  type ItemType = Value
-
   val Simple = Value("Simple")
   val Agent = Value("Agent")
   val SNMP = Value("SNMP")
 }
 
 object DataType extends Enumeration {
-
-  type DataType = Value
-
   val Number = Value("Number")
   val String = Value("String")
   val Boolean = Value("Boolean")

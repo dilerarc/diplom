@@ -4,32 +4,35 @@
     @main(title = "All triggers") {
 
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <h1 id="forms" class="page-header">All triggers</h1>
-                <p><a href="@routes.TriggerController.showNew" class="btn btn-default">New trigger</a></p>
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Item</th>
-                            <th>Value</th>
-                            <th>Compare</th>
-                            <th>State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @for(e <- col) {
-                        <tr>
-                            <td><a href="@routes.TriggerController.edit(e._id.toString)">@e.name</a></td>
-                            <td>@Item.get(e.itemId).get.name</td>
-                            <td>@e.value</td>
-                            <td>@e.compareType</td>
-                            <td>@(if(e.active) "Enabled" else "Disabled")</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <div class="col-md-12">
+
+                    <h1 id="forms" class="page-header">All triggers</h1>
+                    <p><a href="@routes.TriggerController.showNew" class="btn btn-default">New trigger</a></p>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Item</th>
+                                <th>Value</th>
+                                <th>Compare</th>
+                                <th>State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(e <- col) {
+                            <tr>
+                                <td><a href="@routes.TriggerController.edit(e._id.toString)">@e.name</a></td>
+                                <td>@Item.get(e.itemId).get.name</td>
+                                <td>@e.value</td>
+                                <td>@e.compareType</td>
+                                <td>@(if(e.active) "Enabled" else "Disabled")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

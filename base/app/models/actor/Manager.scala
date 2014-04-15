@@ -14,7 +14,7 @@ class Manager extends Actor {
   val triggerWorkers: mutable.Set[ActorRef] = mutable.Set.empty
 
   override def preStart(): Unit = {
-    context.setReceiveTimeout(20 seconds)
+    context.setReceiveTimeout(20.seconds)
     Logger.info("Local manager started.")
   }
 

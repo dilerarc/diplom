@@ -13,11 +13,4 @@ object ApplicationController extends Controller {
     Ok(views.html.sign())
   }
 
-  def home = Action {
-    Ok(views.html.sign())
-  }
-
-  def index = Action {
-    Redirect(routes.ApplicationController.home)
-  }
 }

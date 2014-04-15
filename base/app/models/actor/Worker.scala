@@ -3,11 +3,9 @@ package models.actor
 import scala.concurrent.duration._
 import akka.actor._
 import com.ucheck.common._
-import scala.util.Random
 import org.joda.time.DateTime
 import scala.sys.process.ProcessBuilder
 import play.api.Logger
-import com.ucheck.agent._
 import com.ucheck.common.JobsStop
 import com.ucheck.common.Job
 import com.ucheck.common.JobResult
@@ -17,7 +15,7 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
 
   import context.dispatcher
 
-  var t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
+  var t2 = context.system.scheduler.schedule(1.seconds, job.updateInterval.seconds) {
 
     val format1: ProcessBuilder = F.format(job.command)
     println(format1)

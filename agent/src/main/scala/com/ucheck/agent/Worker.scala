@@ -14,7 +14,7 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
 
   override def preStart(): Unit = {
     println("start:" + job)
-    t2 = context.system.scheduler.schedule(1 seconds, job.updateInterval seconds) {
+    t2 = context.system.scheduler.schedule(1.seconds, job.updateInterval.seconds) {
       //sudo atop 0 1 -PPRM | grep java | awk '{print $12}'
       val format1: ProcessBuilder = F.format(job.command)
       println(format1)

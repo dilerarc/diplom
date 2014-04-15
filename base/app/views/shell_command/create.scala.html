@@ -3,19 +3,22 @@
 
     @main(title = "Shell command") {
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <h1 id="forms" class="page-header">Shell command</h1>
+                <div class="col-md-12">
 
-                @helper.form(routes.ShellCommandController.saveNew, 'role -> "form") {
+                    <h1 id="forms" class="page-header">Shell command</h1>
 
-                    @text(form("name"), "Name", "Enter name")
+                    @helper.form(routes.ShellCommandController.saveNew, 'role -> "form") {
 
-                    @text(form("command"), "Command text", "Enter command")
+                        @text(form("name"), "Name", "Enter name")
 
-                    <button type="submit" class="btn btn-default">Submit</button>
-                }
+                        @text(form("command"), "Command text", "Enter command")
 
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    }
+
+                </div>
             </div>
         </div>
 

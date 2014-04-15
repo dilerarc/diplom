@@ -12,6 +12,7 @@ object ItemController extends Controller {
     mapping(
       "name" -> nonEmptyText,
       "hostId" -> nonEmptyText,
+      "itemGroupId" -> nonEmptyText,
       "itemType" -> nonEmptyText,
       "commandId" -> nonEmptyText,
       "dataType" -> nonEmptyText,
@@ -21,11 +22,11 @@ object ItemController extends Controller {
       "description" -> nonEmptyText,
       "active" -> optional(text)
     ) {
-      (name, hostId, itemType, commandId, dataType, units, updateInterval, keepPeriod, description, active) =>
-        Item(name, hostId, ItemType.withName(itemType), commandId, DataType.withName(dataType), units, updateInterval, keepPeriod, description, active exists (_.nonEmpty))
+      (name, hostId, itemGroupId, itemType, commandId, dataType, units, updateInterval, keepPeriod, description, active) =>
+        Item(name, hostId, itemGroupId, ItemType.withName(itemType), commandId, DataType.withName(dataType), units, updateInterval, keepPeriod, description, active exists (_.nonEmpty))
     } {
-      item => Some(item.name, item.hostId, item.itemType.toString, item.commandId,
-        item.dataType.toString, item.units, item.updateInterval, item.keepPeriod, item.description, Option(if(item.active) "on" else ""))
+      item => Some(item.name, item.hostId, item.itemGroupId, item.itemType.toString, item.commandId,
+        item.dataType.toString, item.units, item.updateInterval, item.keepPeriod, item.description, Option(if (item.active) "on" else ""))
     }
   )
 
@@ -35,19 +36,19 @@ object ItemController extends Controller {
   }
 
   def showNew = Action {
-    Ok(views.html.item.create(Host.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), form))
+    Ok(views.html.item.create(Host.all(), ItemGroup.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), form))
   }
 
   def edit(id: String) = Action {
     Item.get(id)
       .fold(Redirect(routes.ItemController.all))(
-        entity => Ok(views.html.item.edit(entity, Host.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), form.fill(entity))))
+        entity => Ok(views.html.item.edit(entity, Host.all(), ItemGroup.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), form.fill(entity))))
   }
 
   def saveNew = Action {
     implicit request =>
       form.bindFromRequest.fold(
-        errors => BadRequest(views.html.item.create(Host.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), errors)),
+        errors => BadRequest(views.html.item.create(Host.all(), ItemGroup.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), errors)),
         item => {
           Item.create(item)
           Redirect(routes.ItemController.all)
@@ -61,7 +62,7 @@ object ItemController extends Controller {
         .fold(Redirect(routes.ItemController.all))(
           entity =>
             form.bindFromRequest.fold(
-              errors => BadRequest(views.html.item.edit(entity, Host.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), errors)),
+              errors => BadRequest(views.html.item.edit(entity, Host.all(), ItemGroup.all(), ItemType.values.toSeq, DataType.values.toSeq, ShellCommand.all(), errors)),
               item => {
                 Item.edit(item.copy(_id = entity._id))
                 Redirect(routes.ItemController.all)

@@ -1,0 +1,30 @@
+@(items: List[Item])
+
+@main(title = "Charts for multiple items") {
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="forms">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <label class="sr-only" for="period">Period</label>
+                            <input id="period" value="5" class="form-control" placeholder="Enter period">
+                        </div>
+                        <button type="submit" class="btn btn-default">Apply period</button>
+                    </form>
+                </div>
+
+                <div id="charts"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        @for(item <- items) {
+            charts('@item._id.toString', '@item.name', '@item.units', $('#period').val());
+        }
+    </script>
+}

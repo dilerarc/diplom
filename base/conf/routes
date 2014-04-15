@@ -1,55 +1,64 @@
 # Home page
-GET         /                                controllers.ApplicationController.home
-GET         /sign                            controllers.ApplicationController.sign
+GET         /                             controllers.HostController.all
+GET         /sign                         controllers.ApplicationController.sign
 
 
 # Hosts routes
-GET         /hosts                           controllers.HostController.all
-GET         /hosts/:id/                      controllers.HostController.edit(id:String)
-GET         /hosts/create                    controllers.HostController.showNew
+GET         /hosts                        controllers.HostController.all
+GET         /hosts/:id/                   controllers.HostController.edit(id:String)
+GET         /hosts/create                 controllers.HostController.showNew
 
-POST        /hosts/create                    controllers.HostController.saveNew
-POST        /hosts/:id/                      controllers.HostController.save(id:String)
+POST        /hosts/create                 controllers.HostController.saveNew
+POST        /hosts/:id/                   controllers.HostController.save(id:String)
 
 
 # Items routes
-GET         /items                           controllers.ItemController.all
-GET         /items/:id/                      controllers.ItemController.edit(id:String)
-GET         /items/create                    controllers.ItemController.showNew
+GET         /items                        controllers.ItemController.all
+GET         /items/:id/                   controllers.ItemController.edit(id:String)
+GET         /items/create                 controllers.ItemController.showNew
 
-POST        /items/create                    controllers.ItemController.saveNew
-POST        /items/:id/                      controllers.ItemController.save(id:String)
+POST        /items/create                 controllers.ItemController.saveNew
+POST        /items/:id/                   controllers.ItemController.save(id:String)
 
 
 # Trigger routes
-GET         /triggers                        controllers.TriggerController.all
-GET         /triggers/:id/                   controllers.TriggerController.edit(id:String)
-GET         /triggers/create                 controllers.TriggerController.showNew
+GET         /triggers                     controllers.TriggerController.all
+GET         /triggers/:id/                controllers.TriggerController.edit(id:String)
+GET         /triggers/create              controllers.TriggerController.showNew
 
-POST        /triggers/create                 controllers.TriggerController.saveNew
-POST        /triggers/:id/                   controllers.TriggerController.save(id:String)
+POST        /triggers/create              controllers.TriggerController.saveNew
+POST        /triggers/:id/                controllers.TriggerController.save(id:String)
 
 
 # Charts routes
-GET         /charts/:itemId                  controllers.ChartController.show(itemId:String)
-GET         /charts/:itemId/data             controllers.ChartController.get(itemId:String, minutes:String)
+GET         /charts/:itemId               controllers.ChartController.show(itemId:String)
+GET         /charts/multi/:itemGroupId               controllers.ChartController.showMulti(itemGroupId:String)
+GET         /charts/:itemId/data          controllers.ChartController.get(itemId:String, minutes:String)
 
 
 # Shell commands routes
-GET         /shell_commands                  controllers.ShellCommandController.all
-GET         /shell_commands/:id/             controllers.ShellCommandController.edit(id:String)
-GET         /shell_commands/create           controllers.ShellCommandController.showNew
+GET         /shell_commands               controllers.ShellCommandController.all
+GET         /shell_commands/:id/          controllers.ShellCommandController.edit(id:String)
+GET         /shell_commands/create        controllers.ShellCommandController.showNew
 
-POST        /shell_commands/create           controllers.ShellCommandController.saveNew
-POST        /shell_commands/:id/             controllers.ShellCommandController.save(id:String)
+POST        /shell_commands/create        controllers.ShellCommandController.saveNew
+POST        /shell_commands/:id/          controllers.ShellCommandController.save(id:String)
 
 
 # Host groups routes
-GET         /host_groups                     controllers.HostGroupController.all
-GET         /host_groups/:id/                controllers.HostGroupController.edit(id:String)
-GET         /host_groups/create              controllers.HostGroupController.showNew
+GET         /host_groups                  controllers.HostGroupController.all
+GET         /host_groups/:id/             controllers.HostGroupController.edit(id:String)
+GET         /host_groups/create           controllers.HostGroupController.showNew
 
-POST        /host_groups/create              controllers.HostGroupController.saveNew
-POST        /host_groups/:id/                controllers.HostGroupController.save(id:String)
+POST        /host_groups/create           controllers.HostGroupController.saveNew
+POST        /host_groups/:id/             controllers.HostGroupController.save(id:String)
 
-GET         /assets/*file                    controllers.Assets.at(path="/public", file)
+# Item groups routes
+GET         /item_groups                     controllers.ItemGroupController.all
+GET         /item_groups/:id/                controllers.ItemGroupController.edit(id:String)
+GET         /item_groups/create              controllers.ItemGroupController.showNew
+
+POST        /item_groups/create              controllers.ItemGroupController.saveNew
+POST        /item_groups/:id/                controllers.ItemGroupController.save(id:String)
+
+GET         /assets/*file                 controllers.Assets.at(path="/public", file)

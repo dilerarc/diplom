@@ -1,6 +1,7 @@
 @(
         e: Item,
         hosts: List[Host],
+        itemGroups: List[ItemGroup],
         itemTypes: Seq[ItemType.Value],
         dataTypes: Seq[DataType.Value],
         commands: List[ShellCommand],
@@ -10,36 +11,41 @@
 
     @main(title = "Item") {
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <h1 id="forms" class="page-header">Item</h1>
+                <div class="col-md-12">
 
-                @helper.form(routes.ItemController.save(e._id.toString), 'role -> "form") {
+                    <h1 id="forms" class="page-header">Item</h1>
 
-                    @text(form("name"), "Name", "Enter name")
+                    @helper.form(routes.ItemController.save(e._id.toString), 'role -> "form") {
 
-                    @select(form("hostId"), "Host", hosts.map(h => (h.name, h._id.toString)))
+                        @text(form("name"), "Name", "Enter name")
 
-                    @select(form("itemType"), "Type", itemTypes.map(it => (it.toString, it.toString)))
+                        @select(form("hostId"), "Host", hosts.map(h => (h.name, h._id.toString)))
 
-                    @select(form("commandId"), "Command", commands.map(c => (c.command, c._id.toString)))
+                        @select(form("itemGroupId"), "Item group", itemGroups.map(ig => (ig.name, ig._id.toString)))
 
-                    @select(form("dataType"), "Data type", dataTypes.map(d => (d.toString, d.toString)))
+                        @select(form("itemType"), "Type", itemTypes.map(it => (it.toString, it.toString)))
 
-                    @text(form("units"), "Units", "Enter units")
+                        @select(form("commandId"), "Command", commands.map(c => (c.command, c._id.toString)))
 
-                    @text(form("updateInterval"), "Update interval", "Enter number")
+                        @select(form("dataType"), "Data type", dataTypes.map(d => (d.toString, d.toString)))
 
-                    @text(form("keepPeriod"), "Keep period", "Enter number")
+                        @text(form("units"), "Units", "Enter units")
 
-                    @text(form("description"), "Description", "Enter description")
+                        @text(form("updateInterval"), "Update interval", "Enter number")
 
-                    @checkbox(form("active"), "Active")
+                        @text(form("keepPeriod"), "Keep period", "Enter number")
 
-                    <button type="submit" class="btn btn-default">Submit</button>
+                        @text(form("description"), "Description", "Enter description")
 
-                }
+                        @checkbox(form("active"), "Active")
 
+                        <button type="submit" class="btn btn-default">Submit</button>
+
+                    }
+
+                </div>
             </div>
         </div>
 

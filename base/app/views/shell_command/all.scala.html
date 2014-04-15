@@ -4,26 +4,29 @@
     @main(title = "All shell commands") {
 
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <h1 id="forms" class="page-header">All shell commands</h1>
-                <p><a href="@routes.ShellCommandController.showNew" class="btn btn-default">New command</a></p>
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Сommand</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @for(e <- col) {
-                        <tr>
-                            <td><a href="@routes.ShellCommandController.edit(e._id.toString)">@e.name</a></td>
-                            <td>@e.command</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <div class="col-md-12">
+
+                    <h1 id="forms" class="page-header">All shell commands</h1>
+                    <p><a href="@routes.ShellCommandController.showNew" class="btn btn-default">New command</a></p>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Сommand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(e <- col) {
+                            <tr>
+                                <td><a href="@routes.ShellCommandController.edit(e._id.toString)">@e.name</a></td>
+                                <td>@e.command</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

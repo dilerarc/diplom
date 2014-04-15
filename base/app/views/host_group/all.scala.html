@@ -1,28 +1,31 @@
 @(col: List[HostGroup])
 
 
-@main(title = "All host groups") {
+    @main(title = "All host groups") {
 
 
-    <div class="container">
-        <div class="row">
-            <h1 id="forms" class="page-header">All host groups</h1>
-            <p><a href="@routes.HostGroupController.showNew" class="btn btn-default">New host group</a></p>
-            <table class="table table-condensed">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @for(e <- col) {
-                    <tr>
-                        <td><a href="@routes.HostGroupController.edit(e._id.toString)">@e.name</a></td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <h1 id="forms" class="page-header">All host groups</h1>
+                    <p><a href="@routes.HostGroupController.showNew" class="btn btn-default">New host group</a></p>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(e <- col) {
+                            <tr>
+                                <td><a href="@routes.HostGroupController.edit(e._id.toString)">@e.name</a></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
 
-}
+    }

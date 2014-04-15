@@ -1,6 +1,12 @@
-function chart(itemId, label, units, period) {
+function charts(itemId, label, units, period) {
+    var placeholderId = "placeholder" + itemId
+    $("#charts").append("<div id='{0}' class='placeholderAll'></div>".format(placeholderId))
+    chart(itemId, label, units, period, placeholderId)
+}
 
-    var plot = $.plot("#placeholder", [
+function chart(itemId, label, units, period, placeholder) {
+
+    var plot = $.plot("#" + placeholder, [
         {
             data: [], label: label + ", " + units
         }

@@ -9,7 +9,6 @@ import play.api.Play.current
 import mongoContext._
 import com.mongodb.casbah.Imports._
 import org.joda.time.DateTime
-import models.CompareType.CompareType
 
 case class MonitoringData(itemId: String, data: String, date:DateTime, _id: ObjectId = new ObjectId)
 case class MonitoringDataCompressed(data: String, date:Long)
@@ -33,14 +32,14 @@ object MonitoringData {
       .map(m => MonitoringDataCompressed(m.data, m.date.getMillis)).toTraversable)
   }
 
-  def find(itemId: String, from:DateTime, to:DateTime, value:String, compare:CompareType) = {
-    MonitoringDataDAO.find(MongoDBObject("itemId" -> itemId) ++ ("date" $gte from $lte to) ++ compare match {
-      case CompareType.Eq => "data" -> value
+  def find(itemId: String, from:DateTime, to:DateTime, value:String, compare:CompareType.Value) = {
+    MonitoringDataDAO.find(MongoDBObject("itemId" -> itemId) ++ ("date" $gte from $lte to) ++ {compare match {
+      case CompareType.Eq => MongoDBObject("data" -> value)
       case CompareType.G => "data" $gt value
       case CompareType.L => "data" $lt value
       case CompareType.Ge => "data" $gte value
       case CompareType.Le => "data" $lte value
-    }).toList
+    }}).toList
   }
 
   def create(e: MonitoringData) = {
