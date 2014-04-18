@@ -2,7 +2,7 @@ package com.ucheck.agent
 
 import scala.concurrent.duration._
 import akka.actor._
-import com.ucheck.common.{JobsStop, JobResult, Job}
+import com.ucheck.common.{JobsStopAll, JobsStop, JobResult, Job}
 import scala.sys.process._
 import org.joda.time.DateTime
 
@@ -19,8 +19,6 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
       val format1: ProcessBuilder = F.format(job.command)
       println(format1)
       val s = format1.!!
-      println(s)
-
       val r = "\\d+".r
       val result = r.findFirstIn(s).get
       println(result)
@@ -30,7 +28,7 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
 
   override def receive: Actor.Receive = {
 
-    case JobsStop =>
+    case JobsStopAll =>
       println("stop:" + job)
       t2.cancel()
       self ! PoisonPill

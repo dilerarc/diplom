@@ -32,8 +32,8 @@ POST        /triggers/:id/                controllers.TriggerController.save(id:
 
 # Charts routes
 GET         /charts/:itemId               controllers.ChartController.show(itemId:String)
-GET         /charts/multi/:itemGroupId               controllers.ChartController.showMulti(itemGroupId:String)
-GET         /charts/:itemId/data          controllers.ChartController.get(itemId:String, minutes:String)
+GET         /charts/multi/:itemGroupId    controllers.ChartController.showMulti(itemGroupId:String)
+GET         /charts/:itemId/data          controllers.ChartController.get(itemId:String, period:String)
 
 
 # Shell commands routes

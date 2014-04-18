@@ -46,7 +46,7 @@ object Item {
   }
 
   def getByItemGroup(itemGroupId: String): List[Item] = {
-    ItemDAO.find(MongoDBObject("itemGroupId" -> new ObjectId(itemGroupId))).toList
+    ItemDAO.find(MongoDBObject("itemGroupId" -> itemGroupId)).toList
   }
 
   def delete(id: String) {

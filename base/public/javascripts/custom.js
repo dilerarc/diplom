@@ -19,20 +19,23 @@ function chart(itemId, label, units, period, placeholder) {
     });
 
     function update() {
+        var d = getData(itemId, period);
+        if(d.length > 0){
+            var newData = JSON.parse(d).map(function (obj) {
+                return [obj.date, obj.data];
+            });
 
-        var newData = JSON.parse(getData(itemId, period)).map(function (obj) {
-            return [obj.date, obj.data];
-        });
+            plot.setData([
+                {
+                    data: newData, label: label + ", " + units
+                }
+            ]);
+            plot.setupGrid();
+            plot.draw();
 
-        plot.setData([
-            {
-                data: newData, label: label + ", " + units
-            }
-        ]);
-        plot.setupGrid();
-        plot.draw();
-
+        }
         setTimeout(update, 2000);
+
     }
 
     update()
@@ -40,7 +43,7 @@ function chart(itemId, label, units, period, placeholder) {
 
 function getData(itemId, period) {
 
-    var result = [];
+    var result = "";
 
     var request = $.ajax({
         async: false,
@@ -48,6 +51,7 @@ function getData(itemId, period) {
     });
 
     request.done(function (data) {
+        if(data == "ERROR") return result;
         result = data;
     });
 

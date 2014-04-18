@@ -23,14 +23,6 @@ class Director extends Actor {
     refreshJobs()
   }
 
-  context.system.scheduler.schedule(5.seconds, 1.hours) {
-    Item.all().foreach(
-      item => {
-        val date = DateTime.now().minusMinutes(item.keepPeriod.toInt)
-        MonitoringData.clean(item._id.toString, date)
-      })
-  }
-
   val localManager = context.actorOf(Manager(), "localManager")
   val statsHandler = context.actorOf(StatsHandler(), "statsHandler")
 
