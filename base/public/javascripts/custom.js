@@ -8,9 +8,13 @@ function chart(itemId, label, units, period, placeholder) {
 
     var plot = $.plot("#" + placeholder, [
         {
-            data: [], label: label + ", " + units
+            data: [],
+            label: label + ", " + units
         }
     ], {
+        series: {
+            lines: { show: true, fill: true }
+        },
         xaxis: {
             timeformat: "%H:%M:%S",
             mode: "time",

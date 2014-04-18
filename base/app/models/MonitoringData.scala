@@ -28,7 +28,9 @@ object MonitoringData {
 
   def find(itemId: String, from:DateTime, to:DateTime): String = {
     grater[MonitoringDataCompressed]
-      .toPrettyJSONArray(MonitoringDataDAO.find(MongoDBObject("itemId" -> itemId) ++ ("date" $gte from $lte to))
+      .toPrettyJSONArray(MonitoringDataDAO
+      .find(MongoDBObject("itemId" -> itemId) ++ ("date" $gte from $lte to))
+      .sort(orderBy = MongoDBObject("date" -> 0))
       .map(m => MonitoringDataCompressed(m.data, m.date.getMillis)).toTraversable)
   }
 
