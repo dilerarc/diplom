@@ -9,7 +9,7 @@ import play.api.Logger
 import com.ucheck.common.JobsStop
 import com.ucheck.common.Job
 import com.ucheck.common.JobResult
-import models.Item
+import models.{ItemType, Item}
 import scala.util.Try
 
 class Worker(sender: ActorRef, job: Job) extends Actor {
@@ -23,7 +23,10 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
     val s = Try(format1.!!).getOrElse("")
     println(s)
 
-    val res = if(s.contains("alive")) "1" else "0"
+    val res = Item.get(job.itemId).get.itemType match {
+      case ItemType.Simple => if (s.contains("alive")) "1" else "0"
+      case ItemType.SNMP => "\\d+".r.findFirstIn(s.split("\\s+").toList.reverse.head).get
+    }
 
     sender ! JobResult(job.itemId, res, DateTime.now)
   }
@@ -37,7 +40,7 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
   }
 
   override def receive: Actor.Receive = {
-    case JobsStop(host) => if(Item.get(job.itemId).get.hostId == host)
+    case JobsStop(host) => if (Item.get(job.itemId).get.hostId == host)
       Logger.info(s"Received jobs stop. Actor: $self.")
 
       t2.cancel()
@@ -52,5 +55,5 @@ class Worker(sender: ActorRef, job: Job) extends Actor {
 }
 
 object Worker {
-  def apply(sender:ActorRef, job:Job): Props = Props(classOf[Worker], sender, job)
+  def apply(sender: ActorRef, job: Job): Props = Props(classOf[Worker], sender, job)
 }
