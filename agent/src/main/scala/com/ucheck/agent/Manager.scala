@@ -1,7 +1,7 @@
 package com.ucheck.agent
 
 import akka.actor._
-import com.ucheck.common.{JobsStopAll, JobsStop, Jobs}
+import com.ucheck.common.{AgentJobs, JobsStopAll, JobsStop, Jobs}
 import scala.concurrent.duration._
 
 class Manager extends Actor {
@@ -16,12 +16,12 @@ class Manager extends Actor {
 
   override def receive: Actor.Receive = {
 
-    case jobs: Jobs =>
+    case AgentJobs(jobs) =>
 
-      println(jobs.jobs)
+      println(jobs)
       stop()
 
-      jobs.jobs.foreach(job => {
+      jobs.foreach(job => {
         val worker = context.actorOf(Worker(sender, job))
         workers += worker
       })

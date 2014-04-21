@@ -2,10 +2,14 @@ package models.actor
 
 import akka.actor._
 import scala.concurrent.duration._
-import com.ucheck.common.{JobsStopAll, Jobs, JobsStop}
+import com.ucheck.common._
 import play.api.Logger
 import models.Triggers
 import scala.collection.mutable
+import models.Triggers
+import com.ucheck.common.JobsStop
+import com.ucheck.common.JobsStopAll
+import com.ucheck.common.SimpleJobs
 
 class Manager extends Actor {
 
@@ -23,13 +27,23 @@ class Manager extends Actor {
   }
 
   def receive = {
-    case jobs: Jobs =>
-      Logger.info(s"Received jobs. Actor: $self, jobs: $jobs.")
+
+    case SimpleJobs(jobs) =>
+      Logger.info(s"Received simple jobs. Actor: $self, jobs: $jobs.")
       stop(simpleWorkers)
 
-      jobs.jobs.foreach(job => {
+      jobs.foreach(job => {
         val worker = context.actorOf(Worker(sender, job))
         simpleWorkers += worker
+      })
+
+    case SNMPJobs(jobs) =>
+      Logger.info(s"Received snmp jobs. Actor: $self, jobs: $jobs.")
+      stop(snmpWorkers)
+
+      jobs.foreach(job => {
+        val worker = context.actorOf(Worker(sender, job))
+        snmpWorkers += worker
       })
 
     case js: JobsStop =>

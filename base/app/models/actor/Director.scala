@@ -78,17 +78,26 @@ class Director extends Actor {
         val agentJobs = pair._2
           .filter(_.itemType == ItemType.Agent)
           .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
+
         Logger.info("Sending jobs to remote manager")
         Logger.info(agentJobs.toString())
-        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! Jobs(agentJobs)
+        context.system.actorSelection(s"akka.tcp://agentSystem@$ip:2552/user/manager") ! AgentJobs(agentJobs)
 
         val simpleJobs = pair._2
           .filter(_.itemType == ItemType.Simple)
           .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
 
-        Logger.info("Sending jobs to local manager")
+        Logger.info("Sending simple jobs to local manager")
         Logger.info(simpleJobs.toString())
-        localManager ! Jobs(simpleJobs)
+        localManager ! SimpleJobs(simpleJobs)
+
+        val snmpJobs = pair._2
+          .filter(_.itemType == ItemType.SNMP)
+          .map(item => Job(item._id.toString, commands(item.commandId).command, item.updateInterval))
+
+        Logger.info("Sending snmp jobs to local manager")
+        Logger.info(snmpJobs.toString())
+        localManager ! SNMPJobs(snmpJobs)
 
       })
 
