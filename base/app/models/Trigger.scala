@@ -14,10 +14,11 @@ case class Trigger(name: String,
                    value: String,
                    compareType: CompareType.Value,
                    active: Boolean,
+                   processed: Boolean = false,
                    _id: ObjectId = new ObjectId)
 
 case class Triggers(triggers: Set[Trigger])
-case class TriggerCheckResult(itemId:String, data:List[MonitoringData])
+case class TriggerCheckResult(triggerId:String, itemId:String, data:List[MonitoringData])
 
 object TriggerDAO extends SalatDAO[Trigger, ObjectId](
   collection = MongoConnection()(

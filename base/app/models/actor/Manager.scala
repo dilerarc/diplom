@@ -4,9 +4,7 @@ import akka.actor._
 import scala.concurrent.duration._
 import com.ucheck.common._
 import play.api.Logger
-import models.Triggers
 import scala.collection.mutable
-import models.Triggers
 import com.ucheck.common.JobsStop
 import com.ucheck.common.JobsStopAll
 import com.ucheck.common.SimpleJobs
@@ -57,15 +55,6 @@ class Manager extends Actor {
       simpleWorkers foreach (_ ! jsa)
       snmpWorkers foreach (_ ! jsa)
       triggerWorkers foreach (_ ! jsa)
-
-    case triggers: Triggers =>
-      Logger.info(s"Received triggers. Actor: $self, triggers: $triggers.")
-      stop(triggerWorkers)
-
-      triggers.triggers.foreach(trigger => {
-        val triggerWorker = context.actorOf(TriggerWorker(sender, trigger))
-        triggerWorkers += triggerWorker
-      })
 
     case ReceiveTimeout ⇒
       Logger.info(s"Received timeout. Actor: $self.")

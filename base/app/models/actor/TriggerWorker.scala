@@ -2,15 +2,10 @@ package models.actor
 
 import scala.concurrent.duration._
 import akka.actor._
-import com.ucheck.common.JobsStop
-import scala.util.Random
 import org.joda.time.DateTime
-import scala.sys.process.ProcessBuilder
 import play.api.Logger
 import com.ucheck.common.JobsStop
-import com.ucheck.common.Job
-import com.ucheck.common.JobResult
-import models.{TriggerCheckResult, MonitoringData, Item, Trigger}
+import models.{TriggerCheckResult, MonitoringData, Trigger}
 
 class TriggerWorker(sender: ActorRef, trigger: Trigger) extends Actor {
 
@@ -22,7 +17,7 @@ class TriggerWorker(sender: ActorRef, trigger: Trigger) extends Actor {
 
     val res = MonitoringData.find(trigger.itemId, date , DateTime.now(), trigger.value, trigger.compareType)
     date = DateTime.now()
-    if(res.nonEmpty) sender ! TriggerCheckResult(trigger.itemId, res)
+    if(res.nonEmpty) sender ! TriggerCheckResult(trigger._id.toString, trigger.itemId, res)
   }
 
   override def preStart(): Unit = {

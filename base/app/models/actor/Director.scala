@@ -5,15 +5,10 @@ import models._
 import scala.concurrent.duration._
 import com.ucheck.common._
 import play.api.Logger
-import org.joda.time.DateTime
-import models.util.EmailSender
-import models.TriggerCheckResult
 import models.Triggers
 import com.ucheck.common.JobsStop
 import com.ucheck.common.Job
-import com.ucheck.common.Jobs
 import com.ucheck.common.JobResult
-import play.api.i18n.Messages
 
 class Director extends Actor {
 
@@ -25,6 +20,7 @@ class Director extends Actor {
 
   val localManager = context.actorOf(Manager(), "localManager")
   val statsHandler = context.actorOf(StatsHandler(), "statsHandler")
+  val triggerManager = context.actorOf(StatsHandler(), "triggerManager")
 
   override def preStart(): Unit = {
     Logger.info("Base actor started.")
@@ -43,15 +39,6 @@ class Director extends Actor {
     case result: JobResult =>
       Logger.info(s"Received job result. Actor: $self, result: $result.")
       statsHandler ! result
-
-    case triggerCheckResult: TriggerCheckResult =>
-      Logger.info(s"Received trigger check result. Actor: $self.")
-      val report = s"Item: ${triggerCheckResult.itemId}, data: [${triggerCheckResult.data.toString()}]"
-      EmailSender.sendEmail(Email(
-        Messages("contact.request.subject", DateTime.now()),
-        Messages("contact.request.email.recipient"),
-        Messages("contact.request.email.recipient", report)))
-
   }
 
   private def refreshJobs() = {
@@ -102,6 +89,6 @@ class Director extends Actor {
       })
 
 
-      localManager ! Triggers(Trigger.all().filter(_.active).toSet)
+      triggerManager ! Triggers(Trigger.all().filter(_.active).toSet)
   }
 }
